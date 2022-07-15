@@ -1,11 +1,17 @@
 package com.clonelol.entity;
 
+import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class Champion {
+public class Champion {
 
-    private String type = "champion";
-    private String format = "standAloneComplex";
+    private String version;
+    private String name;
+    private String title;
+    private ChampList data;
+    private String parType;
+    @Embedded
+    private Stats stats;
 
 }
