@@ -15,7 +15,7 @@ import static com.clonelol.ApiConfiguration.CHAMP_INFO;
 import static com.clonelol.ApiConfiguration.CHAMP_ROTATIONS;
 
 @RestController
-public class FreeChampionsController {
+public class ChampionsController {
 
     //개발자용 API KEY 값
     String developKey = "RGAPI-48945fbf-5594-469d-8c34-c308fd84e0ff";
