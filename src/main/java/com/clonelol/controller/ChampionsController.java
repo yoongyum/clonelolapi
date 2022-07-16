@@ -1,5 +1,8 @@
 package com.clonelol.controller;
 
+import com.clonelol.entity.ChampList;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
-import static com.clonelol.ApiConfiguration.CHAMP_INFO;
-import static com.clonelol.ApiConfiguration.CHAMP_ROTATIONS;
-import static com.clonelol.config.ApiKeyConfiguration.DEV_KEY;
+import static com.clonelol.config.ApiKeyConfiguration.*;
 
 @RestController
 @RequestMapping("/lol/api/champion")
@@ -20,7 +21,7 @@ public class ChampionsController {
 
     //모든 챔피언 정보 불러오기
     @GetMapping("/info")
-    public String getChampionList() {
+    public String getChampionList() throws JsonProcessingException {
 
         URI uri = UriComponentsBuilder
                 .fromUriString(CHAMP_INFO)
@@ -31,6 +32,10 @@ public class ChampionsController {
 
         String result = restTemplate.getForObject(uri, String.class);
 
+        ObjectMapper om = new ObjectMapper();
+
+        ChampList champList = om.readValue(result, ChampList.class);
+
         return result;
     }
 
@@ -40,7 +45,7 @@ public class ChampionsController {
     public String getFreeChapList(Model model) {
         URI uri = UriComponentsBuilder
                 .fromUriString(CHAMP_ROTATIONS)//API URI(String)를 여기다 집어넣는다.
-                .queryParam(DEV_KEY)
+                .queryParam("api_key", DEV_KEY)
                 .encode()
                 .build().toUri();   //String -> URI type 변경.
 

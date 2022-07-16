@@ -1,28 +1,27 @@
 package com.clonelol.entity;
 
-import javax.persistence.Embeddable;
+import lombok.Data;
 
-@Embeddable
-public class Stats {
-
-    private int hp;
-    private int hpPerLevel;
-    private int mp;
-    private int mpPerLevel;
-    private int moveSpeed;
-    private int armor;
-    private int armorPerLevel;
-    private int spellBlock;
-    private int spellBlockPerLevel;
-    private int attackRange;
-    private int hpRegen;
-    private int hpRegenPerLevel;
-    private int mpRegen;
-    private int mpRegenPerLevel;
-    private int crit;
-    private int critPerLevel;
-    private int attackDamage;
-    private int attackDamagePerLevel;
-    private int attackSpeed;
-    private int attackSpeedPerLevel;
+@Data
+public class Stats{
+    public int hp;
+    public int hpperlevel;
+    public int mp;
+    public int mpperlevel;
+    public int movespeed;
+    public int armor;
+    public double armorperlevel;
+    public int spellblock;
+    public double spellblockperlevel;
+    public int attackrange;
+    public double hpregen;
+    public double hpregenperlevel;
+    public int mpregen;
+    public double mpregenperlevel;
+    public int crit;
+    public int critperlevel;
+    public int attackdamage;
+    public double attackdamageperlevel;
+    public double attackspeedperlevel;
+    public double attackspeed;
 }
