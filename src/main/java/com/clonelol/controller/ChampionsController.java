@@ -1,6 +1,5 @@
 package com.clonelol.controller;
 
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +12,7 @@ import java.net.URI;
 
 import static com.clonelol.ApiConfiguration.CHAMP_INFO;
 import static com.clonelol.ApiConfiguration.CHAMP_ROTATIONS;
+import static com.clonelol.config.ApiKeyConfiguration.DEV_KEY;
 
 @RestController
 @RequestMapping("/lol/api/champion")
@@ -29,11 +29,9 @@ public class ChampionsController {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        RequestEntity<Void> req = RequestEntity.get(uri).build();
+        String result = restTemplate.getForObject(uri, String.class);
 
-        ResponseEntity<String> result = restTemplate.exchange(req, String.class);
-
-        return result.getBody();
+        return result;
     }
 
 
@@ -42,7 +40,7 @@ public class ChampionsController {
     public String getFreeChapList(Model model) {
         URI uri = UriComponentsBuilder
                 .fromUriString(CHAMP_ROTATIONS)//API URI(String)를 여기다 집어넣는다.
-                .queryParam(developKey)
+                .queryParam(DEV_KEY)
                 .encode()
                 .build().toUri();   //String -> URI type 변경.
 
