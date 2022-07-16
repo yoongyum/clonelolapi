@@ -54,28 +54,9 @@ public class ChampionsController {
 
         RestTemplate restTemplate = new RestTemplate();
 
-
         ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
 
         return result.getBody();
     }
 
-    @GetMapping("/list")
-    public String getChampList(){
-        URI uri = UriComponentsBuilder
-                .fromUriString(CHAMP_INFO)
-                .encode()
-                .build().toUri();
-
-
-        RequestEntity<Void> req = RequestEntity
-                .get(uri)
-                .build(); //GET 요청으로 보내고 결과 값을 받아옴.
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        ResponseEntity<String> result = restTemplate.exchange(req, String.class);
-
-        return result.getBody();
-    }
 }
