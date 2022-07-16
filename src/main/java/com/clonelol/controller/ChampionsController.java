@@ -8,20 +8,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedReader;
 import java.net.URI;
 
 import static com.clonelol.ApiConfiguration.CHAMP_INFO;
 import static com.clonelol.ApiConfiguration.CHAMP_ROTATIONS;
+import static com.clonelol.config.ApiKeyConfiguration.DEV_KEY;
 
 @RestController
 @RequestMapping("/lol/api/champion")
 public class ChampionsController {
-
-    //개발자용 API KEY 값
-    String developKey = "RGAPI-48945fbf-5594-469d-8c34-c308fd84e0ff";
-
-    BufferedReader br = null;
 
     //모든 챔피언 정보 불러오기
     @GetMapping("/info")
@@ -45,7 +40,7 @@ public class ChampionsController {
     public String getFreeChapList(Model model) {
         URI uri = UriComponentsBuilder
                 .fromUriString(CHAMP_ROTATIONS)//API URI(String)를 여기다 집어넣는다.
-                .queryParam(developKey)
+                .queryParam(DEV_KEY)
                 .encode()
                 .build().toUri();   //String -> URI type 변경.
 
