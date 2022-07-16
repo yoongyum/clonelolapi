@@ -1,6 +1,5 @@
 package com.clonelol.controller;
 
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,11 +34,9 @@ public class ChampionsController {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        RequestEntity<Void> req = RequestEntity.get(uri).build();
+        String result = restTemplate.getForObject(uri, String.class);
 
-        ResponseEntity<String> result = restTemplate.exchange(req, String.class);
-
-        return result.getBody();
+        return result;
     }
 
 
