@@ -35,7 +35,10 @@ public class ChampionsController {
 
         ChampList champList1 = gson.fromJson(result, ChampList.class);
 
-        System.out.println("champList1.getData().get(\"aatrox\").getStats() = " + champList1.getData().get("Aatrox").getStats());
+//        for (var champ : champList1.getData().keySet()){
+//            ChampDetails(champ);//아트록스 상세정보 가져오기 //스킬 스킨 등
+//        }
+
         return result;
     }
 
@@ -59,4 +62,14 @@ public class ChampionsController {
                 .fromUriString(champInfo);
     }
 
+    // 각 챔피언의 세부정보 받아오는 API 호출 메서드
+    private String ChampDetails(String champName){
+        //String -> URI type 변경.
+        Object res = gson.fromJson(restTemplate.getForObject(createUriComponent(CHAMP_DETAILS+champName+".json")//API URI(String)를 여기다 집어넣는다.
+                .encode()
+                .build().toUri(), String.class), Object.class);
+
+        System.out.println(res);
+        return null;
+    }
 }
