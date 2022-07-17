@@ -1,9 +1,7 @@
 package com.clonelol.controller;
 
-import com.clonelol.entity.ChampList;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.ResponseEntity;
+import com.clonelol.controller.dto.RotationsDto;
+import com.google.gson.Gson;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +19,7 @@ public class ChampionsController {
 
     //모든 챔피언 정보 불러오기
     @GetMapping("/info")
-    public String getChampionList() throws JsonProcessingException {
+    public String getChampionList() {
 
         URI uri = UriComponentsBuilder
                 .fromUriString(CHAMP_INFO)
@@ -31,10 +29,6 @@ public class ChampionsController {
         RestTemplate restTemplate = new RestTemplate();
 
         String result = restTemplate.getForObject(uri, String.class);
-
-        ObjectMapper om = new ObjectMapper();
-
-        ChampList champList = om.readValue(result, ChampList.class);
 
         return result;
     }
@@ -51,9 +45,11 @@ public class ChampionsController {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
+        String result = restTemplate.getForObject(uri, String.class);
 
-        return result.getBody();
+        RotationsDto rotationNums = new Gson().fromJson(result, RotationsDto.class);
+
+        return result;
     }
 
 }
