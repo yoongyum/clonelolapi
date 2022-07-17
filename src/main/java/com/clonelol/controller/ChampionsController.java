@@ -1,7 +1,8 @@
 package com.clonelol.controller;
 
 import com.clonelol.controller.dto.RotationsDto;
-import com.clonelol.entity.ChampList;
+import com.clonelol.entity.ChampListDto;
+import com.clonelol.entity.ChampionDto;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Map;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
 
@@ -33,9 +35,14 @@ public class ChampionsController {
 
         String result = restTemplate.getForObject(uri, String.class);
 
-        ChampList champList1 = gson.fromJson(result, ChampList.class);
+        ChampListDto champList = gson.fromJson(result, ChampListDto.class);
 
-        System.out.println("champList1.getData().get(\"aatrox\").getStats() = " + champList1.getData().get("Aatrox").getStats());
+        Map<String, ChampionDto> data = champList.getData();
+
+        data.values().stream()
+                        .map(name -> champDeatil(name))
+
+        System.out.println("champList1.getData().get(\"aatrox\").getStats() = " + champList.getData().get("Aatrox").getStats());
         return result;
     }
 

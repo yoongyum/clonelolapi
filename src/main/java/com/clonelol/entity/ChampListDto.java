@@ -9,11 +9,16 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
-public class ChampList {
+public class ChampListDto {
 
     private String type;
     private String format;
     private String version;
 //    private Object data;
-    private Map<String, Champion> data;
+    private Map<String, ChampionDto> data;
+
+//    public void init(){
+//        data.values()
+//    }
+
 }
