@@ -1,7 +1,6 @@
 package com.clonelol.controller;
 
-import com.clonelol.controller.dto.RotationsDto;
-import com.google.gson.Gson;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +28,6 @@ public class ChampionsController {
         RestTemplate restTemplate = new RestTemplate();
 
         String result = restTemplate.getForObject(uri, String.class);
-
-        System.out.println(result);
 
         return result;
     }

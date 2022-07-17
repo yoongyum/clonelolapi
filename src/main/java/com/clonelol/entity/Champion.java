@@ -1,17 +1,26 @@
 package com.clonelol.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.Embedded;
-import javax.persistence.MappedSuperclass;
+import java.util.ArrayList;
 
-@MappedSuperclass
+@ToString
+@Getter
+@Setter
 public class Champion {
-
-    private String version;
-    private String name;
-    private String title;
-    private ChampList data;
-    private String parType;
+    public String version;
+    public String id;
+    public String key;
+    public String name;
+    public String title;
+    public String blurb;
     @Embedded
-    private Stats stats;
-
+    private Info info;
+    public Image image;
+    public ArrayList<String> tags;
+    public String partype;
+    public Stats stats;
 }
