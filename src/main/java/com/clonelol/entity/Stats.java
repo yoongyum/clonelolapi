@@ -4,23 +4,23 @@ import lombok.Data;
 
 @Data
 public class Stats{
-    public int hp;
-    public int hpperlevel;
-    public int mp;
-    public int mpperlevel;
+    public double hp;
+    public double hpperlevel;
+    public double mp;
+    public double mpperlevel;
     public int movespeed;
     public int armor;
     public double armorperlevel;
-    public int spellblock;
+    public double spellblock;
     public double spellblockperlevel;
     public int attackrange;
     public double hpregen;
     public double hpregenperlevel;
-    public int mpregen;
+    public double mpregen;
     public double mpregenperlevel;
     public int crit;
     public int critperlevel;
-    public int attackdamage;
+    public double attackdamage;
     public double attackdamageperlevel;
     public double attackspeedperlevel;
     public double attackspeed;

@@ -1,15 +1,11 @@
 package com.clonelol.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import javax.persistence.Embedded;
 import java.util.ArrayList;
 
-@ToString
-@Getter
-@Setter
+@Data
 public class Champion {
     public String version;
     public String id;
