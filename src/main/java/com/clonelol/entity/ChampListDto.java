@@ -5,20 +5,19 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
 @ToString
-public class ChampListDto {
+public class ChampListDto<T> {
 
-    private String type;
-    private String format;
     private String version;
-//    private Object data;
-    private Map<String, ChampionDto> data;
 
-//    public void init(){
-//        data.values()
-//    }
+    private Map<String, T> data;
+
+    public Set<String> champNameSet(){
+        return data.keySet();
+    }
 
 }

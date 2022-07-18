@@ -13,7 +13,10 @@ public class ChampionEntity {
 
     @Column(name = "champ_name")
     private String name;
-    @OneToOne(mappedBy = "stats_id")
+
+    @OneToOne
     Stats stats;
 
+//    @OneToOne
+//    Skill spells;
 }
