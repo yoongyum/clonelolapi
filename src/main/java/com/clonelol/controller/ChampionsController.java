@@ -68,17 +68,9 @@ public class ChampionsController {
 
         RotationsDto rotationsDto = gson.fromJson(result, RotationsDto.class);
 
-        //불러온 RotationsDto 정보에 따라서 Entity 최신화
-//        var res = rotationsRepository.findById("rotations");
-//        if(res.isEmpty()){//최초 생성
-//            System.out.println("없음");
-//            rotationsRepository.save(rotationsDto.convertToEntity());
-//        }else{
-//            Rotations rotations = res.get();
-//            rotations.updateMaxLevel(rotationsDto.getMaxNewPlayerLevel());
-//            rotationsRepository.save(rotations);
-//        }
-//        return result;
+        //이번주 로테이션 최신화
+        championsService.updateRotations(rotationsDto);
+
         return null;
     }
 

@@ -4,9 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -29,6 +27,16 @@ public class Champion {
         this.nameEn = nameEn;
         this.nameKr = nameKr;
         this.title = title;
+    }
+
+    //null 경우 로테이션이 아님
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rotations_id")
+    public Rotations rotations;
+
+    //로테이션 셋팅
+    public void setRotations(Rotations rotations) {
+        this.rotations = rotations;
     }
 
     //    @OneToOne

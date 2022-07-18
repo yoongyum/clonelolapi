@@ -10,10 +10,10 @@ import java.util.ArrayList;
 public class RotationsDto {
     
     // 로테이션 챔피언 ID 리스트
-    private ArrayList<Integer> freeChampionIds;
+    private ArrayList<Long> freeChampionIds;
 
     // 신규 유저를 위한 로테이션 챔피언 ID 리스트
-    private ArrayList<Integer> freeChampionIdsForNewPlayers;
+    private ArrayList<Long> freeChampionIdsForNewPlayers;
 
     // 신규 유저 기준 레벨 ( 현재 10 레벨로 되어있음. )
     private int maxNewPlayerLevel;

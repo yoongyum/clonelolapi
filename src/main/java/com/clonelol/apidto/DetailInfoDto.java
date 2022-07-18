@@ -12,10 +12,10 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DetailInfoDto {
 
-    public String id;
-    public Long key;
-    public String name;
-    public String title;
+    public String id;   //챔피언 영문명(고정)
+    public Long key;    //키
+    public String name; //챔피언 명(Region에 따라 다름 :현재 한글)
+    public String title;//챔피언 타이틀
     private Info info;
     private List<Skin> skins = new ArrayList<>();
     private Stats stats;
