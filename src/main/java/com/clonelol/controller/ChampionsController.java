@@ -2,8 +2,10 @@ package com.clonelol.controller;
 
 import com.clonelol.controller.dto.RotationsDto;
 import com.clonelol.entity.ChampInformationDto;
-import com.clonelol.entity.SimpleInfoDto;
 import com.clonelol.entity.DetailInfoDto;
+import com.clonelol.entity.Rotations;
+import com.clonelol.entity.SimpleInfoDto;
+import com.clonelol.repository.RotationsRepository;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -28,6 +30,7 @@ public class ChampionsController {
 
     private final Gson gson;
     private final RestTemplate  restTemplate;
+    private final RotationsRepository rotationsRepository;
 
     //모든 챔피언 정보 불러오기
     @GetMapping("/info")
@@ -65,8 +68,18 @@ public class ChampionsController {
 
         String result = restTemplate.getForObject(uri, String.class);
 
-        RotationsDto rotationNums = gson.fromJson(result, RotationsDto.class);
+        RotationsDto rotationsDto = gson.fromJson(result, RotationsDto.class);
 
+        //불러온 RotationsDto 정보에 따라서 Entity 최신화
+        var res = rotationsRepository.findById("rotations");
+        if(res.isEmpty()){//최초 생성
+            System.out.println("없음");
+            rotationsRepository.save(rotationsDto.convertToEntity());
+        }else{
+            Rotations rotations = res.get();
+            rotations.updateMaxLevel(rotationsDto.getMaxNewPlayerLevel());
+            rotationsRepository.save(rotations);
+        }
         return result;
     }
 
