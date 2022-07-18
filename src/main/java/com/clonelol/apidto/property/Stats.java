@@ -1,4 +1,4 @@
-package com.clonelol.entity;
+package com.clonelol.apidto.property;
 
 import lombok.Data;
 

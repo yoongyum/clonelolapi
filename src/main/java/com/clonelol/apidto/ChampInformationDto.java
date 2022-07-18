@@ -1,4 +1,4 @@
-package com.clonelol.entity;
+package com.clonelol.apidto;
 
 import lombok.Getter;
 import lombok.Setter;

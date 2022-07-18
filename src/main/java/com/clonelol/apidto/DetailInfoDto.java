@@ -1,5 +1,7 @@
-package com.clonelol.entity;
+package com.clonelol.apidto;
 
+import com.clonelol.apidto.property.*;
+import com.clonelol.entity.Champion;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
@@ -11,7 +13,7 @@ import java.util.List;
 public class DetailInfoDto {
 
     public String id;
-    public String key;
+    public Long key;
     public String name;
     public String title;
     private Info info;
@@ -20,17 +22,12 @@ public class DetailInfoDto {
     private List<ActiveSkill> spells = new ArrayList<>();
     private PassiveSkill passive;
 
-//    public ChampionInfoDto convertToEntity() {
-//
-//
-//    }
-
-
-//    public ChampionEntity convertToChamp() {
-//        return ChampionEntitiy.builder()
-//                .id(id)
-//                .name(name)
-//                .stats(statusBuilder())
-//                .build();
-//    }
+    public Champion convertToEntity(){
+        return Champion.builder()
+                .id(key)
+                .title(title)
+                .nameKr(name)
+                .nameEn(id)
+                .build();
+    }
 }

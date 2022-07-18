@@ -1,11 +1,11 @@
 package com.clonelol.controller;
 
+import com.clonelol.apidto.ChampInformationDto;
+import com.clonelol.apidto.DetailInfoDto;
+import com.clonelol.apidto.SimpleInfoDto;
 import com.clonelol.controller.dto.RotationsDto;
-import com.clonelol.entity.ChampInformationDto;
-import com.clonelol.entity.DetailInfoDto;
-import com.clonelol.entity.Rotations;
-import com.clonelol.entity.SimpleInfoDto;
-import com.clonelol.repository.RotationsRepository;
+import com.clonelol.entity.Champion;
+import com.clonelol.service.ChampionsService;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,9 +19,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/lol/api/champion")
@@ -30,11 +30,11 @@ public class ChampionsController {
 
     private final Gson gson;
     private final RestTemplate  restTemplate;
-    private final RotationsRepository rotationsRepository;
+    private final ChampionsService championsService;
 
     //모든 챔피언 정보 불러오기
     @GetMapping("/info")
-    public String getChampionList()  {
+    public void getChampionList()  {
 
         URI uri = createUriComponent(CHAMP_INFO)
                 .encode()
@@ -47,15 +47,13 @@ public class ChampionsController {
                 .exchange(build, new ParameterizedTypeReference<ChampInformationDto<SimpleInfoDto>>() {})
                 .getBody();
 
-        List<DetailInfoDto> collect = champList.getNameSet()
+        List<Champion> entityList = champList.getNameSet()
                 .stream()
                 .map(this::searchChampDetail)
-                .collect(toList());
+                .map(DetailInfoDto::convertToEntity)
+                .collect(Collectors.toList());
 
-        for (DetailInfoDto championInfoDto : collect) {
-            System.out.println("championInfoDto = " + championInfoDto);
-        }
-        return null;
+        championsService.initializeAll(entityList);
     }
 
     //이번주 로테이션 정보 가져오기
@@ -71,16 +69,17 @@ public class ChampionsController {
         RotationsDto rotationsDto = gson.fromJson(result, RotationsDto.class);
 
         //불러온 RotationsDto 정보에 따라서 Entity 최신화
-        var res = rotationsRepository.findById("rotations");
-        if(res.isEmpty()){//최초 생성
-            System.out.println("없음");
-            rotationsRepository.save(rotationsDto.convertToEntity());
-        }else{
-            Rotations rotations = res.get();
-            rotations.updateMaxLevel(rotationsDto.getMaxNewPlayerLevel());
-            rotationsRepository.save(rotations);
-        }
-        return result;
+//        var res = rotationsRepository.findById("rotations");
+//        if(res.isEmpty()){//최초 생성
+//            System.out.println("없음");
+//            rotationsRepository.save(rotationsDto.convertToEntity());
+//        }else{
+//            Rotations rotations = res.get();
+//            rotations.updateMaxLevel(rotationsDto.getMaxNewPlayerLevel());
+//            rotationsRepository.save(rotations);
+//        }
+//        return result;
+        return null;
     }
 
     // 각 챔피언의 세부정보 받아오는 API 호출 메서드
