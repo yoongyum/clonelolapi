@@ -3,12 +3,9 @@ package com.clonelol.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ChampionDto {
+public class SimpleInfoDto {
 
     public String id;
     public String key;

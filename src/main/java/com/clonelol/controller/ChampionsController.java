@@ -1,9 +1,9 @@
 package com.clonelol.controller;
 
 import com.clonelol.controller.dto.RotationsDto;
-import com.clonelol.entity.ChampListDto;
-import com.clonelol.entity.ChampionDto;
-import com.clonelol.entity.ChampionInfoDto;
+import com.clonelol.entity.ChampInformationDto;
+import com.clonelol.entity.SimpleInfoDto;
+import com.clonelol.entity.DetailInfoDto;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,7 +31,7 @@ public class ChampionsController {
 
     //모든 챔피언 정보 불러오기
     @GetMapping("/info")
-    public String getChampionList() {
+    public String getChampionList()  {
 
         URI uri = createUriComponent(CHAMP_INFO)
                 .encode()
@@ -40,16 +40,16 @@ public class ChampionsController {
         RequestEntity<Void> build = RequestEntity.get(uri)
                 .build();
 
-        ChampListDto<ChampionDto> champList = restTemplate.exchange(
-                build, new ParameterizedTypeReference<ChampListDto<ChampionDto>>() {})
+        ChampInformationDto<SimpleInfoDto> champList = restTemplate
+                .exchange(build, new ParameterizedTypeReference<ChampInformationDto<SimpleInfoDto>>() {})
                 .getBody();
 
-        List<ChampionInfoDto> collect = champList.champNameSet()
+        List<DetailInfoDto> collect = champList.getNameSet()
                 .stream()
-                .map(this::champDetails)
+                .map(this::searchChampDetail)
                 .collect(toList());
 
-        for (ChampionInfoDto championInfoDto : collect) {
+        for (DetailInfoDto championInfoDto : collect) {
             System.out.println("championInfoDto = " + championInfoDto);
         }
         return null;
@@ -70,13 +70,8 @@ public class ChampionsController {
         return result;
     }
 
-    private UriComponentsBuilder createUriComponent(String champInfo) {
-        return UriComponentsBuilder
-                .fromUriString(champInfo);
-    }
-
     // 각 챔피언의 세부정보 받아오는 API 호출 메서드
-    private ChampionInfoDto champDetails(String champName) {
+    private DetailInfoDto searchChampDetail(String champName) {
         //String -> URI type 변경.
 
         URI url = createUriComponent(CHAMP_DETAILS)
@@ -87,9 +82,14 @@ public class ChampionsController {
         RequestEntity<Void> request = RequestEntity.get(url)
                 .build();
 
-        ChampListDto<ChampionInfoDto> infoList = restTemplate.exchange(request, new ParameterizedTypeReference<ChampListDto<ChampionInfoDto>>() {})
+        ChampInformationDto<DetailInfoDto> infoList = restTemplate.exchange(request, new ParameterizedTypeReference<ChampInformationDto<DetailInfoDto>>() {})
                 .getBody();
 
-        return infoList.getData().get(champName);
+        return infoList.getValue(champName);
+    }
+
+    private UriComponentsBuilder createUriComponent(String uri) {
+        return UriComponentsBuilder
+                .fromUriString(uri);
     }
 }

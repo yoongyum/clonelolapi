@@ -10,14 +10,18 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-public class ChampListDto<T> {
+public class ChampInformationDto<T> {
 
     private String version;
 
     private Map<String, T> data;
 
-    public Set<String> champNameSet(){
+    public Set<String> getNameSet(){
         return data.keySet();
+    }
+
+    public T getValue(String name) {
+        return (T)(data.get(name));
     }
 
 }
