@@ -1,9 +1,13 @@
 package com.clonelol.controller;
 
 import com.clonelol.controller.dto.RotationsDto;
-import com.clonelol.entity.ChampList;
+import com.clonelol.entity.ChampInformationDto;
+import com.clonelol.entity.SimpleInfoDto;
+import com.clonelol.entity.DetailInfoDto;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.RequestEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,8 +16,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/lol/api/champion")
@@ -21,34 +27,41 @@ import static com.clonelol.config.ApiKeyConfiguration.*;
 public class ChampionsController {
 
     private final Gson gson;
-    private final RestTemplate restTemplate;
+    private final RestTemplate  restTemplate;
 
     //모든 챔피언 정보 불러오기
     @GetMapping("/info")
-    public String getChampionList(){
+    public String getChampionList()  {
 
         URI uri = createUriComponent(CHAMP_INFO)
                 .encode()
                 .build().toUri();
 
-        String result = restTemplate.getForObject(uri, String.class);
+        RequestEntity<Void> build = RequestEntity.get(uri)
+                .build();
 
-        ChampList champList1 = gson.fromJson(result, ChampList.class);
+        ChampInformationDto<SimpleInfoDto> champList = restTemplate
+                .exchange(build, new ParameterizedTypeReference<ChampInformationDto<SimpleInfoDto>>() {})
+                .getBody();
 
-//        for (var champ : champList1.getData().keySet()){
-//            ChampDetails(champ);//아트록스 상세정보 가져오기 //스킬 스킨 등
-//        }
+        List<DetailInfoDto> collect = champList.getNameSet()
+                .stream()
+                .map(this::searchChampDetail)
+                .collect(toList());
 
-        return result;
+        for (DetailInfoDto championInfoDto : collect) {
+            System.out.println("championInfoDto = " + championInfoDto);
+        }
+        return null;
     }
 
     //이번주 로테이션 정보 가져오기
     @GetMapping("/rotations")
     public String getFreeChapList(Model model) {
-        URI uri = createUriComponent(CHAMP_ROTATIONS)//API URI(String)를 여기다 집어넣는다.
+        URI uri = createUriComponent(CHAMP_ROTATIONS)
                 .queryParam("api_key", DEV_KEY)
                 .encode()
-                .build().toUri();   //String -> URI type 변경.
+                .build().toUri();
 
         String result = restTemplate.getForObject(uri, String.class);
 
@@ -57,19 +70,26 @@ public class ChampionsController {
         return result;
     }
 
-    private UriComponentsBuilder createUriComponent(String champInfo) {
-        return UriComponentsBuilder
-                .fromUriString(champInfo);
+    // 각 챔피언의 세부정보 받아오는 API 호출 메서드
+    private DetailInfoDto searchChampDetail(String champName) {
+        //String -> URI type 변경.
+
+        URI url = createUriComponent(CHAMP_DETAILS)
+                .encode()
+                .buildAndExpand(champName)
+                .toUri();
+
+        RequestEntity<Void> request = RequestEntity.get(url)
+                .build();
+
+        ChampInformationDto<DetailInfoDto> infoList = restTemplate.exchange(request, new ParameterizedTypeReference<ChampInformationDto<DetailInfoDto>>() {})
+                .getBody();
+
+        return infoList.getValue(champName);
     }
 
-    // 각 챔피언의 세부정보 받아오는 API 호출 메서드
-    private String ChampDetails(String champName){
-        //String -> URI type 변경.
-        Object res = gson.fromJson(restTemplate.getForObject(createUriComponent(CHAMP_DETAILS+champName+".json")//API URI(String)를 여기다 집어넣는다.
-                .encode()
-                .build().toUri(), String.class), Object.class);
-
-        System.out.println(res);
-        return null;
+    private UriComponentsBuilder createUriComponent(String uri) {
+        return UriComponentsBuilder
+                .fromUriString(uri);
     }
 }
