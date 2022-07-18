@@ -19,10 +19,10 @@ public class RotationsDto {
     private int maxNewPlayerLevel;
 
     @Builder
-    public Rotations convertToEntity(){
+    public Rotations convertToEntity() {
         return Rotations.builder()
                 .id("rotations")
-                .maxNewPlayerLevel(this.maxNewPlayerLevel)
+                .maxNewPlayerLevel(maxNewPlayerLevel)
                 .build();
     }
 }
