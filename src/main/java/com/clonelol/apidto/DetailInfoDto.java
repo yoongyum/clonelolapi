@@ -1,6 +1,7 @@
 package com.clonelol.apidto;
 
 import com.clonelol.apidto.property.*;
+import com.clonelol.config.ApiKeyConfiguration;
 import com.clonelol.entity.Champion;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class DetailInfoDto {
                 .title(title)
                 .nameKr(name)
                 .nameEn(id)
+                .portrait(ApiKeyConfiguration.CHAMP_IMG_PORTRAIT+id+".png")
                 .build();
     }
 }

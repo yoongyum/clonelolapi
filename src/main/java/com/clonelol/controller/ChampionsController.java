@@ -77,7 +77,6 @@ public class ChampionsController {
     // 각 챔피언의 세부정보 받아오는 API 호출 메서드
     private DetailInfoDto searchChampDetail(String champName) {
         //String -> URI type 변경.
-
         URI url = createUriComponent(CHAMP_DETAILS)
                 .encode()
                 .buildAndExpand(champName)
