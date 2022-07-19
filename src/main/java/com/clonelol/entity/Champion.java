@@ -38,6 +38,12 @@ public class Champion {
     //로테이션 셋팅
     public void setRotations(Rotations rotations) {
         this.rotations = rotations;
+        this.rotations.getFreeChampions().add(this);
+    }
+
+    //로테이션 연결 해제
+    public void deleteRotations(){
+        this.rotations = null;
     }
 
     //    @OneToOne

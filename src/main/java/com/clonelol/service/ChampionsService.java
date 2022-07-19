@@ -27,6 +27,10 @@ public class ChampionsService {
     public void updateRotations(RotationsDto rotationsDto) {
         rotationsRepository.findById("rotations")
                 .ifPresent(rotations -> {
+                    List<Champion> championList = rotations.getFreeChampions();
+                    for (Champion champion : championList) {
+                        champion.deleteRotations();
+                    }
                     rotations.deleteFreeChampions();
 
                     rotations.updateMaxLevel(rotationsDto.getMaxNewPlayerLevel());
@@ -36,7 +40,7 @@ public class ChampionsService {
                     rotationsDto.getFreeChampionIds()
                             .stream()
                             .map(freeId -> championRepository.findById(freeId).get())
-                            .forEach(rotations::addFreeChampions);
+                            .forEach(champion -> champion.setRotations(rotations));
 
                     rotationsRepository.save(rotations);
                     return;
