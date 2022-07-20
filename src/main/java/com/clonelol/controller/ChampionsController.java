@@ -5,12 +5,12 @@ import com.clonelol.apidto.DetailInfoDto;
 import com.clonelol.apidto.SimpleInfoDto;
 import com.clonelol.controller.dto.RotationsDto;
 import com.clonelol.entity.Champion;
+import com.clonelol.entity.ChampionStats;
 import com.clonelol.service.ChampionsService;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,12 +53,19 @@ public class ChampionsController {
                 .map(DetailInfoDto::convertToEntity)
                 .collect(Collectors.toList());
 
+        List<ChampionStats> statsList = champList.getNameSet()
+                .stream()
+                .map(this::searchChampDetail)
+                .map(DetailInfoDto::convertToStats)
+                .collect(Collectors.toList());
+
         championsService.initializeAll(entityList);
+        championsService.initializeStatsAll(statsList);
     }
 
     //이번주 로테이션 정보 가져오기
     @GetMapping("/rotations")
-    public String getFreeChapList(Model model) {
+    public String getFreeChapList() {
         URI uri = createUriComponent(CHAMP_ROTATIONS)
                 .queryParam("api_key", DEV_KEY)
                 .encode()
