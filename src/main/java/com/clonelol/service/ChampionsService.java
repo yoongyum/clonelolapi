@@ -2,7 +2,9 @@ package com.clonelol.service;
 
 import com.clonelol.controller.dto.RotationsDto;
 import com.clonelol.entity.Champion;
+import com.clonelol.entity.ChampionStats;
 import com.clonelol.repository.ChampionRepository;
+import com.clonelol.repository.ChampionStatsRepository;
 import com.clonelol.repository.RotationsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,16 @@ public class ChampionsService {
 
     private final ChampionRepository championRepository;
     private final RotationsRepository rotationsRepository;
+    private final ChampionStatsRepository championStatsRepository;
 
     @Transactional
     public void initializeAll(List<Champion> championList) {
         championRepository.saveAll(championList);
+    }
+
+    @Transactional
+    public void initializeStatsAll(List<ChampionStats> statsList) {
+        championStatsRepository.saveAll(statsList);
     }
 
     @Transactional
