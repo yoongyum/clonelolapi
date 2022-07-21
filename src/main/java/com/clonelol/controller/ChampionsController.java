@@ -5,7 +5,6 @@ import com.clonelol.apidto.DetailInfoDto;
 import com.clonelol.apidto.SimpleInfoDto;
 import com.clonelol.controller.dto.RotationsDto;
 import com.clonelol.entity.Champion;
-import com.clonelol.entity.ChampionStats;
 import com.clonelol.service.ChampionsService;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
@@ -53,14 +52,14 @@ public class ChampionsController {
                 .map(DetailInfoDto::convertToEntity)
                 .collect(Collectors.toList());
 
-        List<ChampionStats> statsList = champList.getNameSet()
-                .stream()
-                .map(this::searchChampDetail)
-                .map(DetailInfoDto::convertToStats)
-                .collect(Collectors.toList());
-            //asdad
+//        List<ChampionStats> statsList = champList.getNameSet()
+//                .stream()
+//                .map(this::searchChampDetail)
+//                .map(DetailInfoDto::convertToStats)
+//                .collect(Collectors.toList());
+
         championsService.initializeAll(entityList);
-        championsService.initializeStatsAll(statsList);
+//        championsService.initializeStatsAll(statsList);
     }
 
     //이번주 로테이션 정보 가져오기
