@@ -58,7 +58,7 @@ public class ChampionsController {
                 .map(this::searchChampDetail)
                 .map(DetailInfoDto::convertToStats)
                 .collect(Collectors.toList());
-
+            //asdad
         championsService.initializeAll(entityList);
         championsService.initializeStatsAll(statsList);
     }
