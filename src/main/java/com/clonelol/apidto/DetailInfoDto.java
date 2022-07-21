@@ -38,7 +38,6 @@ public class DetailInfoDto {
 
     public ChampionStats convertToStats() {
         return ChampionStats.builder()
-                .id(key)
                 .hp(stats.getHp())
                 .hpperlevel(stats.getHpperlevel())
                 .mp(stats.getMp())
