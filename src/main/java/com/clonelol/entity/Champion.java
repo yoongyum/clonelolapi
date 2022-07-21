@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.*;
+import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -23,19 +23,24 @@ public class Champion {
     private String title;   //챔피언 타이틀
     private String portrait;    //챔피언 초상화
 
+    //null 경우 로테이션이 아님
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "rotations_id")
+    public Rotations rotations;
+
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "champ_stats_id")
+    private ChampionStats champStats;
+
     @Builder
-    public Champion(Long id, String nameEn, String nameKr, String title, String portrait) {
+    public Champion(Long id, String nameEn, String nameKr, String title, String portrait, ChampionStats championStats) {
         this.id = id;
         this.nameEn = nameEn;
         this.nameKr = nameKr;
         this.title = title;
         this.portrait = portrait;
+        this.champStats = championStats;
     }
-
-    //null 경우 로테이션이 아님
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "rotations_id")
-    public Rotations rotations;
 
     //로테이션 셋팅
     public void setRotations(Rotations rotations) {
@@ -48,13 +53,4 @@ public class Champion {
         this.rotations = null;
     }
 
-    //    @OneToOne
-//    @JoinColumn(name = "123")
-//    private Skill skill;
-
-//    @OneToOne
-//    private Stats stats;
-
-//    @OneToXXX
-//    private Skin skin;
 }

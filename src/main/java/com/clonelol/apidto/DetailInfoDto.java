@@ -31,6 +31,7 @@ public class DetailInfoDto {
                 .nameKr(name)
                 .nameEn(id)
                 .portrait(ApiKeyConfiguration.CHAMP_IMG_PORTRAIT+id+".png")
+                .championStats(convertToStats())
                 .build();
     }
 
