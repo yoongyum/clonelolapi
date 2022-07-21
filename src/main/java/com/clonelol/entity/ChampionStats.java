@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -16,7 +17,8 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 public class ChampionStats {
 
-    @Id
+    @Id @GeneratedValue
+    @Column(name = "champ_stats_id")
     private Long id;    //PK
     // 스텟 정보
     private double hp;   //체력
