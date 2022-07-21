@@ -28,8 +28,8 @@ public class Champion {
     @JoinColumn(name = "rotations_id")
     public Rotations rotations;
 
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "champ_stats_id")
+    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "champion_stats_id")
     private ChampionStats champStats;
 
     @Builder

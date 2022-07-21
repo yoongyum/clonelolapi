@@ -52,19 +52,13 @@ public class ChampionsController {
                 .map(DetailInfoDto::convertToEntity)
                 .collect(Collectors.toList());
 
-//        List<ChampionStats> statsList = champList.getNameSet()
-//                .stream()
-//                .map(this::searchChampDetail)
-//                .map(DetailInfoDto::convertToStats)
-//                .collect(Collectors.toList());
-
         championsService.initializeAll(entityList);
-//        championsService.initializeStatsAll(statsList);
+        getFreeChampList();    //챔피언이 최신화 되면 로테이션 값도 다시 넣어줘야 한다.
     }
 
     //이번주 로테이션 정보 가져오기
     @GetMapping("/rotations")
-    public String getFreeChapList() {
+    public String getFreeChampList() {
         URI uri = createUriComponent(CHAMP_ROTATIONS)
                 .queryParam("api_key", DEV_KEY)
                 .encode()
