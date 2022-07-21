@@ -1,7 +1,9 @@
 package com.clonelol.apidto;
 
 import com.clonelol.apidto.property.*;
+import com.clonelol.config.ApiKeyConfiguration;
 import com.clonelol.entity.Champion;
+import com.clonelol.entity.ChampionStats;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
@@ -28,6 +30,34 @@ public class DetailInfoDto {
                 .title(title)
                 .nameKr(name)
                 .nameEn(id)
+                .portrait(ApiKeyConfiguration.CHAMP_IMG_PORTRAIT+id+".png")
+                .build();
+    }
+
+
+    public ChampionStats convertToStats() {
+        return ChampionStats.builder()
+                .id(key)
+                .hp(stats.getHp())
+                .hpperlevel(stats.getHpperlevel())
+                .mp(stats.getMp())
+                .mpperlevel(stats.getMpperlevel())
+                .movespeed(stats.getMovespeed())
+                .armor(stats.getArmor())
+                .armorperlevel(stats.getArmorperlevel())
+                .spellblock(stats.getSpellblock())
+                .spellblockperlevel(stats.getSpellblockperlevel())
+                .attackrange(stats.getAttackrange())
+                .hpregen(stats.getHpregen())
+                .hpregenperlevel(stats.getHpregenperlevel())
+                .mpregen(stats.getMpregen())
+                .mpregenperlevel(stats.getMpregenperlevel())
+                .crit(stats.getCrit())
+                .critperlevel(stats.getCritperlevel())
+                .attackdamage(stats.getAttackdamage())
+                .attackdamageperlevel(stats.getAttackdamageperlevel())
+                .attackspeed(stats.getAttackspeed())
+                .attackspeedperlevel(stats.getAttackspeedperlevel())
                 .build();
     }
 }
