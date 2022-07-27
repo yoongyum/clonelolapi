@@ -1,4 +1,4 @@
-//package com.clonelol.controller;
+//package com.clonelol.champion.controller;
 //
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import org.junit.jupiter.api.Test;

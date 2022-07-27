@@ -1,4 +1,4 @@
-package com.clonelol.entity;
+package com.clonelol.champion.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

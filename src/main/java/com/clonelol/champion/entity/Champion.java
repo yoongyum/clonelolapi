@@ -1,4 +1,4 @@
-package com.clonelol.entity;
+package com.clonelol.champion.entity;
 
 import lombok.Builder;
 import lombok.Getter;

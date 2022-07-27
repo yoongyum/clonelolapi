@@ -1,11 +1,11 @@
-package com.clonelol.controller;
+package com.clonelol.champion.controller;
 
-import com.clonelol.apidto.ChampInformationDto;
-import com.clonelol.apidto.DetailInfoDto;
-import com.clonelol.apidto.SimpleInfoDto;
-import com.clonelol.controller.dto.RotationsDto;
-import com.clonelol.entity.Champion;
-import com.clonelol.service.ChampionsService;
+import com.clonelol.champion.apidto.ChampInformationDto;
+import com.clonelol.champion.apidto.DetailInfoDto;
+import com.clonelol.champion.apidto.SimpleInfoDto;
+import com.clonelol.champion.controller.dto.RotationsDto;
+import com.clonelol.champion.entity.Champion;
+import com.clonelol.champion.service.ChampionsService;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -53,7 +53,7 @@ public class ChampionsController {
                 .collect(Collectors.toList());
 
         championsService.initializeAll(entityList);
-        getFreeChampList();    //챔피언이 최신화 되면 로테이션 값도 다시 넣어줘야 한다.
+//        getFreeChampList();    //챔피언이 최신화 되면 로테이션 값도 다시 넣어줘야 한다.
     }
 
     //이번주 로테이션 정보 가져오기

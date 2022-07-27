@@ -1,11 +1,11 @@
-package com.clonelol.service;
+package com.clonelol.champion.service;
 
-import com.clonelol.controller.dto.RotationsDto;
-import com.clonelol.entity.Champion;
-import com.clonelol.entity.ChampionStats;
-import com.clonelol.repository.ChampionRepository;
-import com.clonelol.repository.ChampionStatsRepository;
-import com.clonelol.repository.RotationsRepository;
+import com.clonelol.champion.controller.dto.RotationsDto;
+import com.clonelol.champion.entity.Champion;
+import com.clonelol.champion.entity.ChampionStats;
+import com.clonelol.champion.repository.ChampionRepository;
+import com.clonelol.champion.repository.ChampionStatsRepository;
+import com.clonelol.champion.repository.RotationsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

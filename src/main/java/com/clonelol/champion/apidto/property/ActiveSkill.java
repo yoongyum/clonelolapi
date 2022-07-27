@@ -1,4 +1,4 @@
-package com.clonelol.apidto.property;
+package com.clonelol.champion.apidto.property;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

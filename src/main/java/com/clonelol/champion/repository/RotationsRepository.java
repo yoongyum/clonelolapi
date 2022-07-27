@@ -1,6 +1,6 @@
-package com.clonelol.repository;
+package com.clonelol.champion.repository;
 
-import com.clonelol.entity.Rotations;
+import com.clonelol.champion.entity.Rotations;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
