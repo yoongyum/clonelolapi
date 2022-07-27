@@ -1,4 +1,4 @@
-package com.clonelol.controller.dto;
+package com.clonelol.summoner.apidto;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class SummonerDTO {
+public class SummonerDto {
 
     private String accountId;   // 소환사 계정 ID
     private int profileIconId;  // 소환사 프로필 아이콘 ID
