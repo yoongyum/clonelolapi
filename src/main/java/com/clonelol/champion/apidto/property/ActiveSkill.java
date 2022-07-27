@@ -7,7 +7,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ActiveSkill {
 
-    private String id;
+    private Long id;
     private String name;
     private String description;
     private int maxrank;
