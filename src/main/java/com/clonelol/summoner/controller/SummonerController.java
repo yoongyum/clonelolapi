@@ -1,6 +1,7 @@
 package com.clonelol.summoner.controller;
 
 import com.clonelol.summoner.apidto.SummonerDto;
+import com.google.gson.Gson;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -12,7 +13,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 
 import static com.clonelol.config.ApiKeyConfiguration.DEV_KEY;
 import static com.clonelol.config.ApiKeyConfiguration.SUMMONER_SEARCH;
@@ -27,68 +31,67 @@ public class SummonerController {
         String result = "", line;
         BufferedReader br = null;
         // 소환사 정보
-        SummonerDto summonerDTO = null;
+        SummonerDto summonerDto = null;
         // 소환사 이름을 불러와 SummonerName 에 문자열로 저장하기
 //        String mySummonerName = req.getParameter("summonerName");
 
-        URI uri = UriComponentsBuilder
-                .fromUriString(SUMMONER_SEARCH + summonerName + "?api_key=" + DEV_KEY)
-                .encode()
-                .build()
-                .toUri();
-        RestTemplate restTemplate = new RestTemplate();
+//        URI uri = UriComponentsBuilder
+//                .fromUriString(SUMMONER_SEARCH + summonerName + "?api_key=" + DEV_KEY)
+//                .encode()
+//                .build()
+//                .toUri();
+//        RestTemplate restTemplate = new RestTemplate();
+//
+//        RequestEntity<Void> summonerReq = RequestEntity.get(uri).build(); //GET 요청으로 보내고 결과 값을 받아옴.
+//
+//        ResponseEntity<String> summonerResult = restTemplate.exchange(summonerReq,String.class);
+//
+//        return summonerResult.getBody();
 
-        RequestEntity<Void> summonerReq = RequestEntity.get(uri).build(); //GET 요청으로 보내고 결과 값을 받아옴.
+        try{
+            // RequestURL 설정하기
+            String urlstr = SUMMONER_SEARCH + summonerName.replace(" ", "") +
+                    "?api_key=" + DEV_KEY;
 
-        ResponseEntity<String> summonerResult = restTemplate.exchange(summonerReq,String.class);
+            URL url = new URL(urlstr);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            // GET 방식으로 데이터를 가져오기
+            urlConnection.setRequestMethod("GET");
+            // UTF-8 로 인코딩 후 br 에 넣어주기
+            br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
 
-        return summonerResult.getBody();
+            // br 에 넣은 값이 비어있지 않을 때 까지 result 에 값 넣어주기
+            while((line = br.readLine()) != null) {
+                result += line;
+            }
 
-//        try{
-//            // RequestURL 설정하기
-//            String urlstr = "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/"
-//                    + summonerName.replace(" ", "") +"?api_key=" + DEV_KEY;
-//
-//            URL url = new URL(urlstr);
-//            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//            // GET 방식으로 데이터를 가져오기
-//            urlConnection.setRequestMethod("GET");
-//            // UTF-8 로 인코딩 후 br 에 넣어주기
-//            br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-//
-//            // br 에 넣은 값이 비어있지 않을 때 까지 result 에 값 넣어주기
-//            while((line = br.readLine()) != null) {
-//                result += line;
-//            }
-//
-//            // Gson 으로 바꿔야함!!
-//            JsonParser jsonParser = new JsonParser();                         // json 으로 받아온 객체들을 parsing
-//            JsonObject jResult =  (JsonObject) jsonParser.parse(result);
+            // Gson 으로 바꿔야함!!
+            Gson gson = new Gson();
+            summonerDto = gson.fromJson(result, SummonerDto.class);
 
-//            int profileIconId = jResult.get("profileIconId").getAsInt();      // 소환사 profileIconId
-//            String name = jResult.get("name").getAsString();                  // 소환사 name
-//            String puuid = jResult.get("puuid").getAsString();                // 소환사 puuid
-//            long summonerLevel = jResult.get("summonerLevel").getAsLong();    // 소환사 레벨
-//            long revisionDate = jResult.get("revisionDate").getAsLong();      // 소환사 revisionDate
-//            String id = jResult.get("id").getAsString();                      // 소환사 id
-//            String accountId = jResult.get("accountId").getAsString();        // 소환사 account ID
-//
-//            summonerDTO = new SummonerDTO(accountId,profileIconId,revisionDate,name,id,puuid,summonerLevel); // 가져온객체를 생성자에 전달
-//
-//            model.addAttribute("SummonerName",summonerName);
-//            model.addAttribute("profileIconId",profileIconId);
-//            model.addAttribute("name",name);
-//            model.addAttribute("puuid",puuid);
-//            model.addAttribute("summonerLevel",summonerLevel);
-//            model.addAttribute("revisionDate",revisionDate);
-//            model.addAttribute("id",id);
-//            model.addAttribute("accountId",accountId);
-//
-//
-//        }
-//        catch(Exception e){
-//            e.printStackTrace();
-//        }
-//        return "/";
+            String accountId = summonerDto.getAccountId();          // 소환사 account ID
+            int profileIconId = summonerDto.getProfileIconId();     // 소환사 profileIconId
+            long revisionDate = summonerDto.getRevisionDate();      // 소환사 revisionDate
+            String name = summonerDto.getName();                    // 소환사 name
+            String id = summonerDto.getId();                        // 소환사 id
+            String puuid = summonerDto.getPuuid();                  // 소환사 puuid
+            long summonerLevel = summonerDto.getSummonerLevel();    // 소환사 레벨
+
+            System.out.println(summonerDto.toString());
+
+            model.addAttribute("accountId",accountId);
+            model.addAttribute("profileIconId",profileIconId);
+            model.addAttribute("revisionDate",revisionDate);
+            model.addAttribute("SummonerName",summonerName);
+            model.addAttribute("name",name);
+            model.addAttribute("id",id);
+            model.addAttribute("puuid",puuid);
+            model.addAttribute("summonerLevel",summonerLevel);
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return "/";
     }
 }
