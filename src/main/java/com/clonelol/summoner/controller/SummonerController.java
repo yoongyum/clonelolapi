@@ -1,27 +1,24 @@
-package com.clonelol.controller;
+package com.clonelol.summoner.controller;
 
-import com.clonelol.controller.config.ApiKeyConfiguration;
-import com.clonelol.controller.dto.SummonerDTO;
+import com.clonelol.summoner.apidto.SummonerDto;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
+
+import static com.clonelol.config.ApiKeyConfiguration.DEV_KEY;
+import static com.clonelol.config.ApiKeyConfiguration.SUMMONER_SEARCH;
 
 @RestController
-public class SearchSummonerController extends ApiKeyConfiguration {
+public class SummonerController {
 
     // 소환사 전적검색
     @GetMapping("/lol/api/summoner/search/{summonerName}")
@@ -30,7 +27,7 @@ public class SearchSummonerController extends ApiKeyConfiguration {
         String result = "", line;
         BufferedReader br = null;
         // 소환사 정보
-        SummonerDTO summonerDTO = null;
+        SummonerDto summonerDTO = null;
         // 소환사 이름을 불러와 SummonerName 에 문자열로 저장하기
 //        String mySummonerName = req.getParameter("summonerName");
 
