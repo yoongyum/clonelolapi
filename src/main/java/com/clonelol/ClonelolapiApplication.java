@@ -29,3 +29,5 @@ public class ClonelolapiApplication {
 		return restTemplateBuilder.build();
 	}
 }
+
+// tests...
