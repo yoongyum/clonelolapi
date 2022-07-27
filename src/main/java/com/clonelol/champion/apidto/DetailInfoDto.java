@@ -1,9 +1,9 @@
-package com.clonelol.apidto;
+package com.clonelol.champion.apidto;
 
-import com.clonelol.apidto.property.*;
+import com.clonelol.champion.apidto.property.*;
 import com.clonelol.config.ApiKeyConfiguration;
-import com.clonelol.entity.Champion;
-import com.clonelol.entity.ChampionStats;
+import com.clonelol.champion.entity.Champion;
+import com.clonelol.champion.entity.ChampionStats;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 

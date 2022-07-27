@@ -1,6 +1,6 @@
-package com.clonelol.controller.dto;
+package com.clonelol.champion.controller.dto;
 
-import com.clonelol.entity.Rotations;
+import com.clonelol.champion.entity.Rotations;
 import lombok.Builder;
 import lombok.Getter;
 
