@@ -1,6 +1,7 @@
 package com.clonelol.champion.apidto;
 
 import com.clonelol.champion.apidto.property.*;
+import com.clonelol.champion.entity.ChampionSkills;
 import com.clonelol.config.ApiKeyConfiguration;
 import com.clonelol.champion.entity.Champion;
 import com.clonelol.champion.entity.ChampionStats;
@@ -9,6 +10,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,32 +34,60 @@ public class DetailInfoDto {
                 .nameEn(id)
                 .portrait(ApiKeyConfiguration.CHAMP_IMG_PORTRAIT+id+".png")
                 .championStats(convertToStats())
+                .skills(setSkill(passive, spells))
                 .build();
     }
-
 
     public ChampionStats convertToStats() {
         return ChampionStats.builder()
                 .hp(stats.getHp())
-                .hpperlevel(stats.getHpperlevel())
+                .hpperlevel(stats.getHpPerLevel())
                 .mp(stats.getMp())
-                .mpperlevel(stats.getMpperlevel())
-                .movespeed(stats.getMovespeed())
+                .mpperlevel(stats.getMpPerLevel())
+                .movespeed(stats.getMoveSpeed())
                 .armor(stats.getArmor())
-                .armorperlevel(stats.getArmorperlevel())
-                .spellblock(stats.getSpellblock())
-                .spellblockperlevel(stats.getSpellblockperlevel())
-                .attackrange(stats.getAttackrange())
-                .hpregen(stats.getHpregen())
-                .hpregenperlevel(stats.getHpregenperlevel())
-                .mpregen(stats.getMpregen())
-                .mpregenperlevel(stats.getMpregenperlevel())
+                .armorperlevel(stats.getArmorPerLevel())
+                .spellblock(stats.getSpellBlock())
+                .spellblockperlevel(stats.getSpellBlockPerLevel())
+                .attackrange(stats.getAttackRange())
+                .hpregen(stats.getHpRegen())
+                .hpregenperlevel(stats.getHpRegenPerLevel())
+                .mpregen(stats.getMpRegen())
+                .mpregenperlevel(stats.getMpRegenPerLevel())
                 .crit(stats.getCrit())
-                .critperlevel(stats.getCritperlevel())
-                .attackdamage(stats.getAttackdamage())
-                .attackdamageperlevel(stats.getAttackdamageperlevel())
-                .attackspeed(stats.getAttackspeed())
-                .attackspeedperlevel(stats.getAttackspeedperlevel())
+                .critperlevel(stats.getCritPerLevel())
+                .attackdamage(stats.getAttackDamage())
+                .attackdamageperlevel(stats.getAttackDamagePerLevel())
+                .attackspeed(stats.getAttackSpeed())
+                .attackspeedperlevel(stats.getAttackSpeedPerLevel())
                 .build();
+    }
+
+    private List<ChampionSkills> setSkill(PassiveSkill passive, List<ActiveSkill> skills){
+
+        List<ChampionSkills> championSkills = skills.stream()
+                .map(skill -> {
+                    return ChampionSkills.builder()
+                            .id(skill.getId())
+                            .name(skill.getName())
+                            .description(skill.getDescription())
+                            .maxRank(skill.getMaxRank())
+                            .tooltip(skill.getTooltip())
+                            .coolDownBurn(skill.getCoolDownBurn())
+                            .costBurns(skill.getCostBurns())
+                            .rangeBurn(skill.getRangeBurn())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        ChampionSkills passiveEntity = ChampionSkills.builder()
+                .id(id)
+                .name(passive.getName())
+                .description(passive.getDescription())
+                .build();
+
+        championSkills.add(passiveEntity);
+
+        return championSkills;
     }
 }

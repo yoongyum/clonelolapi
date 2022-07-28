@@ -12,5 +12,4 @@ public class Skill {
     private String description;
     private String temp;
 
-
 }
