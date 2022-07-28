@@ -66,8 +66,7 @@ public class DetailInfoDto {
     private List<ChampionSkills> setSkill(PassiveSkill passive, List<ActiveSkill> skills){
 
         List<ChampionSkills> championSkills = skills.stream()
-                .map(skill -> {
-                    return ChampionSkills.builder()
+                .map(skill -> ChampionSkills.builder()
                             .id(skill.getId())
                             .name(skill.getName())
                             .description(skill.getDescription())
@@ -76,12 +75,11 @@ public class DetailInfoDto {
                             .coolDownBurn(skill.getCoolDownBurn())
                             .costBurns(skill.getCostBurns())
                             .rangeBurn(skill.getRangeBurn())
-                            .build();
-                })
+                            .build())
                 .collect(Collectors.toList());
 
         ChampionSkills passiveEntity = ChampionSkills.builder()
-                .id(id)
+                .id("P-"+id)
                 .name(passive.getName())
                 .description(passive.getDescription())
                 .build();

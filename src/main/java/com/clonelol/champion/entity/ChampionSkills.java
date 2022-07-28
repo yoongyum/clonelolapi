@@ -3,14 +3,14 @@ package com.clonelol.champion.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 
+import static lombok.AccessLevel.PROTECTED;
+
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
-@ToString
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 public class ChampionSkills {
 
@@ -18,18 +18,20 @@ public class ChampionSkills {
     @Column(name = "champion_skills_id")
     private String id;    //PK
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "champion_id")
     private Champion champion;
 
     private String name;
 
+    @Lob
     private String description;
 
     //    @Column(name = "max_rank")
     private int maxRank;
 
     //    @Column(name = "tool_tip")
+    @Lob
     private String tooltip;
 
     //    @Column(name = "cool_down_burn")
