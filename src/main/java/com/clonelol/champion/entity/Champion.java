@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -32,14 +35,24 @@ public class Champion {
     @JoinColumn(name = "champion_stats_id")
     private ChampionStats champStats;
 
+    @OneToMany(mappedBy = "champion")
+    private List<ChampionSkills> skills = new ArrayList<>();
+
     @Builder
-    public Champion(Long id, String nameEn, String nameKr, String title, String portrait, ChampionStats championStats) {
+    public Champion(Long id, String nameEn, String nameKr, String title, String portrait, ChampionStats championStats, List<ChampionSkills> skills) {
         this.id = id;
         this.nameEn = nameEn;
         this.nameKr = nameKr;
         this.title = title;
         this.portrait = portrait;
         this.champStats = championStats;
+        setSkills(skills);
+    }
+
+    private void setSkills(List<ChampionSkills> skills){
+        for (ChampionSkills skill : skills) {
+            skills.add(skill);
+        }
     }
 
     //로테이션 셋팅
