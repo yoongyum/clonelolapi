@@ -3,14 +3,14 @@ package com.clonelol.champion.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
-import static lombok.AccessLevel.PROTECTED;
-
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = PROTECTED)
+@NoArgsConstructor
+@ToString
 @Entity
 public class ChampionSkills {
 
@@ -41,4 +41,7 @@ public class ChampionSkills {
     //    @Column(name = "range_burn")
     private String rangeBurn;   //레벨당 스킬 사거리 변화
 
+    public void addChampion(Champion champion){
+        this.champion = champion;
+    }
 }
