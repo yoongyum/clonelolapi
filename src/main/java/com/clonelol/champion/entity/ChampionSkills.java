@@ -44,8 +44,7 @@ public class ChampionSkills {
     //    @Column(name = "range_burn")
     private String rangeBurn;   //레벨당 스킬 사거리 변화
 
-
-    public void addChampion(Champion champion) {
+    public void addChampion(Champion champion){
         this.champion = champion;
     }
 }

@@ -47,14 +47,14 @@ public class Champion {
         this.title = title;
         this.portrait = portrait;
         this.champStats = championStats;
-        addSkills(skills);
+        setSkills(skills);
     }
 
-    private void addSkills(List<ChampionSkills> skills){
-        this.skills.addAll(skills);
-        skills.forEach(
-                s -> s.addChampion(this)
-        );
+    private void setSkills(List<ChampionSkills> championSkills){
+        this.skills.addAll(championSkills);
+        this.skills.forEach( skill -> {
+            skill.addChampion(this);
+        });
     }
 
     //로테이션 셋팅
