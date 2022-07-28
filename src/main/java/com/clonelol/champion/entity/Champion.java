@@ -49,10 +49,11 @@ public class Champion {
         setSkills(skills);
     }
 
-    private void setSkills(List<ChampionSkills> skills){
-        for (ChampionSkills skill : skills) {
-            skills.add(skill);
-        }
+    private void setSkills(List<ChampionSkills> championSkills){
+        this.skills.addAll(championSkills);
+        this.skills.forEach( skill -> {
+            skill.addChampion(this);
+        });
     }
 
     //로테이션 셋팅
