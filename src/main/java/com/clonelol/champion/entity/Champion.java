@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -31,11 +32,11 @@ public class Champion {
     @JoinColumn(name = "rotations_id")
     public Rotations rotations;
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "champion_stats_id")
     private ChampionStats champStats;
 
-    @OneToMany(mappedBy = "champion")
+    @OneToMany(mappedBy = "champion", cascade = ALL)
     private List<ChampionSkills> skills = new ArrayList<>();
 
     @Builder
@@ -46,13 +47,14 @@ public class Champion {
         this.title = title;
         this.portrait = portrait;
         this.champStats = championStats;
-        setSkills(skills);
+        addSkills(skills);
     }
 
-    private void setSkills(List<ChampionSkills> skills){
-        for (ChampionSkills skill : skills) {
-            skills.add(skill);
-        }
+    private void addSkills(List<ChampionSkills> skills){
+        this.skills.addAll(skills);
+        skills.forEach(
+                s -> s.addChampion(this)
+        );
     }
 
     //로테이션 셋팅

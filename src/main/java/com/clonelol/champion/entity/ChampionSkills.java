@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Builder
@@ -18,18 +19,20 @@ public class ChampionSkills {
     @Column(name = "champion_skills_id")
     private String id;    //PK
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "champion_id")
     private Champion champion;
 
     private String name;
 
+    @Lob
     private String description;
 
     //    @Column(name = "max_rank")
     private int maxRank;
 
     //    @Column(name = "tool_tip")
+    @Lob
     private String tooltip;
 
     //    @Column(name = "cool_down_burn")
@@ -41,4 +44,8 @@ public class ChampionSkills {
     //    @Column(name = "range_burn")
     private String rangeBurn;   //레벨당 스킬 사거리 변화
 
+
+    public void addChampion(Champion champion) {
+        this.champion = champion;
+    }
 }
