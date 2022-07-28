@@ -18,7 +18,7 @@ public class ChampionSkills {
     @Column(name = "champion_skills_id")
     private String id;    //PK
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "champion_id")
     private Champion champion;
 
