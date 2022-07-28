@@ -4,6 +4,7 @@ import com.clonelol.champion.controller.dto.RotationsDto;
 import com.clonelol.champion.entity.Champion;
 import com.clonelol.champion.entity.ChampionStats;
 import com.clonelol.champion.repository.ChampionRepository;
+import com.clonelol.champion.repository.ChampionSkillsRepository;
 import com.clonelol.champion.repository.ChampionStatsRepository;
 import com.clonelol.champion.repository.RotationsRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 public class ChampionsService {
 
     private final ChampionRepository championRepository;
+    private final ChampionSkillsRepository championSkillsRepository;
     private final RotationsRepository rotationsRepository;
     private final ChampionStatsRepository championStatsRepository;
 
