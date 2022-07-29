@@ -95,4 +95,20 @@ public class ChampionsController {
         return UriComponentsBuilder
                 .fromUriString(uri);
     }
+    
+    @GetMapping("/version")
+    public String getVersion()  {
+
+        URI uri = createUriComponent(GAME_VERSION)
+                .encode()
+                .build().toUri();
+
+        RequestEntity<Void> build = RequestEntity.get(uri)
+                .build();
+        
+        String result = restTemplate.getForObject(uri, String.class);
+        
+        return result;
+
+    }
 }
