@@ -1,5 +1,6 @@
 package com.clonelol.champion.entity;
 
+import com.clonelol.web.dto.RotationResDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -68,4 +69,11 @@ public class Champion {
         this.rotations = null;
     }
 
+    //로테이션 응답 Dto로 변환
+    public RotationResDto toRotationResDto() {
+        RotationResDto dto = new RotationResDto();
+        dto.setName(this.nameKr);
+        dto.setPortrait(this.portrait);
+        return dto;
+    }
 }
