@@ -39,9 +39,12 @@ public class Champion {
 
     @OneToMany(mappedBy = "champion", cascade = ALL)
     private List<ChampionSkills> skills = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "champion", cascade = ALL)
+    private List<ChampionSkins> skins = new ArrayList<>();
 
     @Builder
-    public Champion(Long id, String nameEn, String nameKr, String title, String portrait, ChampionStats championStats, List<ChampionSkills> skills) {
+    public Champion(Long id, String nameEn, String nameKr, String title, String portrait, ChampionStats championStats, List<ChampionSkills> skills, List<ChampionSkins> skins) {
         this.id = id;
         this.nameEn = nameEn;
         this.nameKr = nameKr;
@@ -49,6 +52,7 @@ public class Champion {
         this.portrait = portrait;
         this.champStats = championStats;
         setSkills(skills);
+        setSkins(skins);
     }
 
     private void setSkills(List<ChampionSkills> championSkills){
@@ -56,6 +60,13 @@ public class Champion {
         this.skills.forEach( skill -> {
             skill.addChampion(this);
         });
+    }
+    
+    private void setSkins(List<ChampionSkins> championSkins) {
+    	this.skins.addAll(championSkins);
+    	this.skins.forEach( skin -> {
+    		skin.addChampion(this);
+    	});
     }
 
     //로테이션 셋팅

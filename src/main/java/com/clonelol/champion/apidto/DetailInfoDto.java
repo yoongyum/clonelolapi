@@ -5,6 +5,7 @@ import com.clonelol.champion.entity.ChampionSkills;
 import com.clonelol.config.ApiKeyConfiguration;
 import com.clonelol.champion.entity.Champion;
 import com.clonelol.champion.entity.ChampionStats;
+import com.clonelol.champion.entity.ChampionSkins;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
@@ -35,6 +36,7 @@ public class DetailInfoDto {
                 .portrait(ApiKeyConfiguration.CHAMP_IMG_PORTRAIT+id+".png")
                 .championStats(convertToStats())
                 .skills(setSkill(passive, spells))
+                .skins(setSkin(skins))
                 .build();
     }
 
@@ -88,4 +90,19 @@ public class DetailInfoDto {
 
         return championSkills;
     }
+    
+    private List<ChampionSkins> setSkin(List<Skin> skins){
+
+        List<ChampionSkins> championSkins = skins.stream()
+                .map(skin -> ChampionSkins.builder()
+                            .id(skin.getId())
+                            .name(skin.getName())
+                            .num(skin.getNum())
+                            .chromas(skin.getChromas())
+                            .build())
+                .collect(Collectors.toList());
+
+        return championSkins;
+    }
+
 }
