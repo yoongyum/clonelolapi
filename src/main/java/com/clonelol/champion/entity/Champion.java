@@ -57,16 +57,12 @@ public class Champion {
 
     private void setSkills(List<ChampionSkills> championSkills){
         this.skills.addAll(championSkills);
-        this.skills.forEach( skill -> {
-            skill.addChampion(this);
-        });
+        this.skills.forEach( skill -> skill.setChampion(this));
     }
     
     private void setSkins(List<ChampionSkins> championSkins) {
     	this.skins.addAll(championSkins);
-    	this.skins.forEach( skin -> {
-    		skin.addChampion(this);
-    	});
+    	this.skins.forEach( skin -> skin.setChampion(this));
     }
 
     //로테이션 셋팅
