@@ -55,7 +55,7 @@ public class ChampionsController {
 
         List<Champion> entityList = champList.getNameSet()
                 .stream()
-                .map(this::searchChampDetail)
+                .map(name -> searchChampDetail(version, name))
                 .map(DetailInfoDto::convertToEntity)
                 .collect(Collectors.toList());
 
@@ -113,22 +113,22 @@ public class ChampionsController {
                 .build();
         
         String[] result = restTemplate.getForObject(uri, String[].class);
-        System.out.println("최신 버전: "+result[0]);
 
         versionRepository.findById("Version").ifPresentOrElse(version -> {
-            version.setLatestVersion("12.13.1");
             //버전이 최신화 될 경우
             if( result[0] != version.getLatestVersion()){
                 version.updateLatestVersion(result[0]);
                 versionRepository.save(version);
                 getChampionList(version.getLatestVersion());
             }
+            //버전이 그대로면 아무일도 안일어남
         },() -> {//버전 테이블이 검색이 안돼면 새로 생성
             versionRepository.deleteAll();
             Version version = new Version();
             version.setId("Version");
             version.setLatestVersion(result[0]);
             versionRepository.save(version);
+            getChampionList(version.getLatestVersion());
         });
 
 
