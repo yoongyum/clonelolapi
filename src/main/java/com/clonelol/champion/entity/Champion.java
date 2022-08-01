@@ -38,10 +38,10 @@ public class Champion {
     private ChampionStats champStats;
 
     @OneToMany(mappedBy = "champion", cascade = ALL)
-    private List<ChampionSkills> skills = new ArrayList<>();
+    private final List<ChampionSkills> skills = new ArrayList<>();
     
     @OneToMany(mappedBy = "champion", cascade = ALL)
-    private List<ChampionSkins> skins = new ArrayList<>();
+    private final List<ChampionSkins> skins = new ArrayList<>();
 
     @Builder
     public Champion(Long id, String nameEn, String nameKr, String title, String portrait, ChampionStats championStats, List<ChampionSkills> skills, List<ChampionSkins> skins) {
