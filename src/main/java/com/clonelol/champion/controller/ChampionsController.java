@@ -17,8 +17,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
@@ -30,8 +30,9 @@ public class ChampionsController {
     private final RestTemplate restTemplate;
     private final ChampionsService championsService;
     private final VersionRepository versionRepository;
-//    private final static List<Champion> freeChampion = new ArrayList<>();
+    private final static List<Champion> freeChampion = new ArrayList<>();
 
+    //서버 켜지면 버전이 최신인지 확인 후
     @EventListener(ApplicationReadyEvent.class)
     public void checkVersion() {
 
@@ -41,7 +42,7 @@ public class ChampionsController {
         //저장된 데이터가
         //있으면 그대로 가져오고, 없으면 최신 버전을 생성하면서 챔프 정보를 불러온다.
         Version version = versionRepository.findById("Version")
-                .orElseGet(create(newVersion));
+                .orElseGet(()-> create(newVersion));
 
         //저장된 데이터가 있을 때,
         //최신 버전인지 확인하고 아니라면 업데이트 한다.
@@ -51,8 +52,9 @@ public class ChampionsController {
 
     }
 
-    private Supplier<Version> create(String newVersion) {
-        Supplier<Version> version = () -> versionRepository.save(Version.builder()
+    //버전데이터가 없을경우 최초 등록 메서드
+    private Version create(String newVersion) {
+        Version version = versionRepository.save(Version.builder()
                 .id("Version")
                 .latestVersion(newVersion)
                 .build());
@@ -61,6 +63,7 @@ public class ChampionsController {
         return version;
     }
 
+    //버전이 바뀔경우 기존 챔피언 정보 업데이트
     private void updateChamp4newVersion(String newVersion, Version findVersion) {
         findVersion.updateLatestVersion(newVersion);
         versionRepository.save(findVersion);
