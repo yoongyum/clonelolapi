@@ -135,6 +135,4 @@ public class ChampionsController {
                 .fromUriString(uri);
     }
 
-    //버전 확인하기
-
 }

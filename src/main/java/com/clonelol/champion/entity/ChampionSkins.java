@@ -26,10 +26,10 @@ public class ChampionSkins {
     private String name;
 
     private int num;
-    
+
     private Boolean chromas;
 
-    public void addChampion(Champion champion){
+    public void setChampion(Champion champion) {
         this.champion = champion;
     }
 }

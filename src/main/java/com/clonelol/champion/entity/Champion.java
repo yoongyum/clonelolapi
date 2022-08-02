@@ -33,10 +33,10 @@ public class Champion {
     private ChampionStats champStats;
 
     @OneToMany(mappedBy = "champion", cascade = ALL)
-    private List<ChampionSkills> skills = new ArrayList<>();
+    private final List<ChampionSkills> skills = new ArrayList<>();
     
     @OneToMany(mappedBy = "champion", cascade = ALL)
-    private List<ChampionSkins> skins = new ArrayList<>();
+    private final List<ChampionSkins> skins = new ArrayList<>();
 
     @Builder
     public Champion(Long id, String nameEn, String nameKr, String title, String portrait, ChampionStats championStats, List<ChampionSkills> skills, List<ChampionSkins> skins) {
@@ -52,16 +52,12 @@ public class Champion {
 
     private void setSkills(List<ChampionSkills> championSkills){
         this.skills.addAll(championSkills);
-        this.skills.forEach( skill -> {
-            skill.addChampion(this);
-        });
+        this.skills.forEach( skill -> skill.setChampion(this));
     }
 
     private void setSkins(List<ChampionSkins> championSkins) {
     	this.skins.addAll(championSkins);
-    	this.skins.forEach( skin -> {
-    		skin.addChampion(this);
-    	});
+    	this.skins.forEach( skin -> skin.setChampion(this));
     }
 
     //로테이션 응답 Dto로 변환
