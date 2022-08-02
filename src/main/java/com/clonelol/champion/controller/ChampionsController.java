@@ -18,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
@@ -29,28 +29,41 @@ public class ChampionsController {
     private final RestTemplate restTemplate;
     private final ChampionsService championsService;
     private final VersionRepository versionRepository;
-    private final static List<Champion> freeChampion = new ArrayList<>();
+//    private final static List<Champion> freeChampion = new ArrayList<>();
 
     @EventListener(ApplicationReadyEvent.class)
     public void checkVersion() {
+
+        System.out.println(" start EventListener @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ");
         String[] result = checkChampVersion();
         String newVersion = result[0];
 
-        Optional<Version> version = versionRepository.findById("Version");
+        System.out.println("newVersion@@@@@@@@@@@@@@@@@@@@@@@@@ = " + newVersion);
+        //저장된 데이터가
+        //있으면 그대로 가져오고, 없으면 최신 버전을 생성하면서 챔프 정보를 불러온다.
+        Version version = versionRepository.findById("Version")
+                .orElseGet(create(newVersion));
 
-        if (version.isEmpty()) {
-            saveNewVersion(newVersion);
-            return;
+        //저장된 데이터가 있을 때,
+        //최신 버전인지 확인하고 아니라면 업데이트 한다.
+        if(!version.isLatestVersion(newVersion)){
+            updateChamp4newVersion(newVersion, version);
         }
-
-        Version findVersion = version.get();
-
-        if (!findVersion.isLatestVersion(newVersion)) {
-            updateChamp4newVersion(newVersion, findVersion);
-        }
+        System.out.println("newVersion@@@@@@@@@@@@@@@@@@@@@@@@@ = " + newVersion);
 
     }
 
+    private Supplier<Version> create(String newVersion) {
+
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ = ");
+        Supplier<Version> version = () -> versionRepository.save(Version.builder()
+                .id("Version")
+                .latestVersion(newVersion)
+                .build());
+        getChampionList(newVersion);
+
+        return version;
+    }
 
     private void updateChamp4newVersion(String newVersion, Version findVersion) {
         findVersion.updateLatestVersion(newVersion);
@@ -86,8 +99,7 @@ public class ChampionsController {
                 .build();
 
         ChampInformationDto<SimpleInfoDto> champList = restTemplate
-                .exchange(build, new ParameterizedTypeReference<ChampInformationDto<SimpleInfoDto>>() {
-                })
+                .exchange(build, new ParameterizedTypeReference<ChampInformationDto<SimpleInfoDto>>() {})
                 .getBody();
 
         List<Champion> entityList = champList.getNameSet()

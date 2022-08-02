@@ -18,10 +18,7 @@ public class Version {
     private String latestVersion;
 
     public boolean isLatestVersion(String latestVersion) {
-        if (this.latestVersion.equals(latestVersion)) {
-            return true;
-        }
-        return false;
+        return this.latestVersion.equals(latestVersion);
     }
 
     public void updateLatestVersion(String newVersion) {
