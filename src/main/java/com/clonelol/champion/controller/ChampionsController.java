@@ -3,44 +3,93 @@ package com.clonelol.champion.controller;
 import com.clonelol.champion.apidto.ChampInformationDto;
 import com.clonelol.champion.apidto.DetailInfoDto;
 import com.clonelol.champion.apidto.SimpleInfoDto;
-import com.clonelol.champion.controller.dto.RotationsDto;
 import com.clonelol.champion.entity.Champion;
 import com.clonelol.champion.entity.Version;
 import com.clonelol.champion.repository.VersionRepository;
 import com.clonelol.champion.service.ChampionsService;
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
 
-@RestController
-@RequestMapping("/lol/api/champion")
 @RequiredArgsConstructor
 public class ChampionsController {
 
-    private final Gson gson;
-    private final RestTemplate  restTemplate;
+    private final RestTemplate restTemplate;
     private final ChampionsService championsService;
-
     private final VersionRepository versionRepository;
+//    private final static List<Champion> freeChampion = new ArrayList<>();
 
-    //모든 챔피언 정보 불러오기
-    @GetMapping("/info")
-    public void getChampionList(String version)  {
+    @EventListener(ApplicationReadyEvent.class)
+    public void checkVersion() {
 
+        System.out.println(" start EventListener @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ");
+        String[] result = checkChampVersion();
+        String newVersion = result[0];
+
+        System.out.println("newVersion@@@@@@@@@@@@@@@@@@@@@@@@@ = " + newVersion);
+        //저장된 데이터가
+        //있으면 그대로 가져오고, 없으면 최신 버전을 생성하면서 챔프 정보를 불러온다.
+        Version version = versionRepository.findById("Version")
+                .orElseGet(create(newVersion));
+
+        //저장된 데이터가 있을 때,
+        //최신 버전인지 확인하고 아니라면 업데이트 한다.
+        if(!version.isLatestVersion(newVersion)){
+            updateChamp4newVersion(newVersion, version);
+        }
+        System.out.println("newVersion@@@@@@@@@@@@@@@@@@@@@@@@@ = " + newVersion);
+
+    }
+
+    private Supplier<Version> create(String newVersion) {
+
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ = ");
+        Supplier<Version> version = () -> versionRepository.save(Version.builder()
+                .id("Version")
+                .latestVersion(newVersion)
+                .build());
+        getChampionList(newVersion);
+
+        return version;
+    }
+
+    private void updateChamp4newVersion(String newVersion, Version findVersion) {
+        findVersion.updateLatestVersion(newVersion);
+        versionRepository.save(findVersion);
+        getChampionList(newVersion);
+    }
+
+    private void saveNewVersion(String latestVersion) {
+        versionRepository.save(Version.builder()
+                .id("Version")
+                .latestVersion(latestVersion)
+                .build());
+
+        getChampionList(latestVersion);
+    }
+
+    private String[] checkChampVersion() {
+        URI uri = createUriComponent(GAME_VERSION)
+                .encode()
+                .build().toUri();
+
+        String[] result = restTemplate.getForObject(uri, String[].class);
+        return result;
+    }
+
+    private void getChampionList(String version) {
         URI uri = createUriComponent(CHAMP_INFO)
                 .encode()
                 .buildAndExpand(version)
@@ -62,36 +111,20 @@ public class ChampionsController {
         championsService.initializeAll(entityList);
     }
 
-    //이번주 로테이션 정보 가져오기
-    @GetMapping("/rotations")
-    public String getFreeChampList() {
-        URI uri = createUriComponent(CHAMP_ROTATIONS)
-                .queryParam("api_key", DEV_KEY)
-                .encode()
-                .build().toUri();
-
-        String result = restTemplate.getForObject(uri, String.class);
-
-        RotationsDto rotationsDto = gson.fromJson(result, RotationsDto.class);
-
-        //이번주 로테이션 최신화
-        championsService.updateRotations(rotationsDto);
-
-        return null;
-    }
 
     // 각 챔피언의 세부정보 받아오는 API 호출 메서드
-    private DetailInfoDto searchChampDetail(String version,String champName) {
+    private DetailInfoDto searchChampDetail(String version, String champName) {
         //String -> URI type 변경.
         URI url = createUriComponent(CHAMP_DETAILS)
                 .encode()
-                .buildAndExpand(version,champName)
+                .buildAndExpand(version, champName)
                 .toUri();
 
         RequestEntity<Void> request = RequestEntity.get(url)
                 .build();
 
-        ChampInformationDto<DetailInfoDto> infoList = restTemplate.exchange(request, new ParameterizedTypeReference<ChampInformationDto<DetailInfoDto>>() {})
+        ChampInformationDto<DetailInfoDto> infoList = restTemplate.exchange(request, new ParameterizedTypeReference<ChampInformationDto<DetailInfoDto>>() {
+                })
                 .getBody();
 
         return infoList.getValue(champName);
@@ -101,38 +134,5 @@ public class ChampionsController {
         return UriComponentsBuilder
                 .fromUriString(uri);
     }
-    
-    //버전 확인하기
-    @EventListener(ApplicationReadyEvent.class)
-    public String getVersion()  {
-        URI uri = createUriComponent(GAME_VERSION)
-                .encode()
-                .build().toUri();
 
-        RequestEntity<Void> build = RequestEntity.get(uri)
-                .build();
-        
-        String[] result = restTemplate.getForObject(uri, String[].class);
-
-        versionRepository.findById("Version").ifPresentOrElse(version -> {
-            //버전이 최신화 될 경우
-            if( result[0] != version.getLatestVersion()){
-                version.updateLatestVersion(result[0]);
-                versionRepository.save(version);
-                getChampionList(version.getLatestVersion());
-            }
-            //버전이 그대로면 아무일도 안일어남
-        },() -> {//버전 테이블이 검색이 안돼면 새로 생성
-            versionRepository.deleteAll();
-            Version version = new Version();
-            version.setId("Version");
-            version.setLatestVersion(result[0]);
-            versionRepository.save(version);
-            getChampionList(version.getLatestVersion());
-        });
-
-
-        return null;
-
-    }
 }
