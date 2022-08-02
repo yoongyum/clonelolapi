@@ -67,15 +67,6 @@ public class ChampionsController {
         getChampionList(newVersion);
     }
 
-    private void saveNewVersion(String latestVersion) {
-        versionRepository.save(Version.builder()
-                .id("Version")
-                .latestVersion(latestVersion)
-                .build());
-
-        getChampionList(latestVersion);
-    }
-
     private String[] checkChampVersion() {
         URI uri = createUriComponent(GAME_VERSION)
                 .encode()
