@@ -1,6 +1,6 @@
 package com.clonelol.champion.entity;
 
-import com.clonelol.web.dto.RotationResDto;
+import com.clonelol.web.dto.RotationResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,11 +27,6 @@ public class Champion {
     private String nameKr;  //챔피언 명칭(Regions에 따라 언어 다름 현재: ko_KR)
     private String title;   //챔피언 타이틀
     private String portrait;    //챔피언 초상화
-
-    //null 경우 로테이션이 아님
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "rotations_id")
-    public Rotations rotations;
 
     @OneToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "champion_stats_id")
@@ -61,7 +56,7 @@ public class Champion {
             skill.addChampion(this);
         });
     }
-    
+
     private void setSkins(List<ChampionSkins> championSkins) {
     	this.skins.addAll(championSkins);
     	this.skins.forEach( skin -> {
@@ -69,20 +64,9 @@ public class Champion {
     	});
     }
 
-    //로테이션 셋팅
-    public void setRotations(Rotations rotations) {
-        this.rotations = rotations;
-        this.rotations.getFreeChampions().add(this);
-    }
-
-    //로테이션 연결 해제
-    public void deleteRotations(){
-        this.rotations = null;
-    }
-
     //로테이션 응답 Dto로 변환
-    public RotationResDto toRotationResDto() {
-        RotationResDto dto = new RotationResDto();
+    public RotationResponse toRotationResDto() {
+        RotationResponse dto = new RotationResponse();
         dto.setName(this.nameKr);
         dto.setPortrait(this.portrait);
         return dto;
