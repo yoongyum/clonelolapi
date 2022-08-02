@@ -12,17 +12,18 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
 
+@Component
 @RequiredArgsConstructor
 public class ChampionsController {
 
@@ -34,11 +35,9 @@ public class ChampionsController {
     @EventListener(ApplicationReadyEvent.class)
     public void checkVersion() {
 
-        System.out.println(" start EventListener @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ");
         String[] result = checkChampVersion();
         String newVersion = result[0];
 
-        System.out.println("newVersion@@@@@@@@@@@@@@@@@@@@@@@@@ = " + newVersion);
         //저장된 데이터가
         //있으면 그대로 가져오고, 없으면 최신 버전을 생성하면서 챔프 정보를 불러온다.
         Version version = versionRepository.findById("Version")
@@ -49,13 +48,10 @@ public class ChampionsController {
         if(!version.isLatestVersion(newVersion)){
             updateChamp4newVersion(newVersion, version);
         }
-        System.out.println("newVersion@@@@@@@@@@@@@@@@@@@@@@@@@ = " + newVersion);
 
     }
 
     private Supplier<Version> create(String newVersion) {
-
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ = ");
         Supplier<Version> version = () -> versionRepository.save(Version.builder()
                 .id("Version")
                 .latestVersion(newVersion)
