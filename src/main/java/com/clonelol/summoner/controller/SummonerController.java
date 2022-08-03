@@ -1,52 +1,36 @@
 package com.clonelol.summoner.controller;
 
+import com.clonelol.summoner.apidto.LeagueEntryDto;
 import com.clonelol.summoner.apidto.SummonerDto;
 import com.google.gson.Gson;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
+import java.util.List;
 
-import static com.clonelol.config.ApiKeyConfiguration.DEV_KEY;
-import static com.clonelol.config.ApiKeyConfiguration.SUMMONER_SEARCH;
+import static com.clonelol.config.ApiKeyConfiguration.*;
 
 @RestController
 public class SummonerController {
 
     // 소환사 전적검색
-    @GetMapping("/lol/api/summoner/search/{summonerName}")
+    @GetMapping("/summoner/search/{summonerName}")
     public String searchSummoner(@PathVariable("summonerName") String summonerName, Model model, HttpServletRequest req){
 
         String result = "", line;
         BufferedReader br = null;
         // 소환사 정보
         SummonerDto summonerDto = null;
-        // 소환사 이름을 불러와 SummonerName 에 문자열로 저장하기
-//        String mySummonerName = req.getParameter("summonerName");
-
-//        URI uri = UriComponentsBuilder
-//                .fromUriString(SUMMONER_SEARCH + summonerName + "?api_key=" + DEV_KEY)
-//                .encode()
-//                .build()
-//                .toUri();
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        RequestEntity<Void> summonerReq = RequestEntity.get(uri).build(); //GET 요청으로 보내고 결과 값을 받아옴.
-//
-//        ResponseEntity<String> summonerResult = restTemplate.exchange(summonerReq,String.class);
-//
-//        return summonerResult.getBody();
+        // 소환사 랭크 정보
+        List<LeagueEntryDto> leagueEntryDto = null;
 
         try{
             // RequestURL 설정하기
@@ -65,7 +49,7 @@ public class SummonerController {
                 result += line;
             }
 
-            // Gson 으로 바꿔야함!!
+            // Gson 으로 SummonerDto 정보 받아오기
             Gson gson = new Gson();
             summonerDto = gson.fromJson(result, SummonerDto.class);
 
@@ -77,16 +61,50 @@ public class SummonerController {
             String puuid = summonerDto.getPuuid();                  // 소환사 puuid
             long summonerLevel = summonerDto.getSummonerLevel();    // 소환사 레벨
 
-            System.out.println(summonerDto.toString());
-
-            model.addAttribute("accountId",accountId);
             model.addAttribute("profileIconId",profileIconId);
-            model.addAttribute("revisionDate",revisionDate);
-            model.addAttribute("SummonerName",summonerName);
-            model.addAttribute("name",name);
-            model.addAttribute("id",id);
-            model.addAttribute("puuid",puuid);
             model.addAttribute("summonerLevel",summonerLevel);
+            model.addAttribute("name",name);
+
+            // 랭크정보 불러 오기
+            urlstr = SUMMONER_DETAIL + id + "?api_key=" + DEV_KEY;
+            url = new URL(urlstr);
+            result = "";
+            line = null;
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+            // GET 방식으로 데이터를 가져오기
+            urlConnection.setRequestMethod("GET");
+            // UTF-8 로 인코딩 후 br 에 넣어주기
+            br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+
+            // br 에 넣은 값이 비어있지 않을 때 까지 result 에 값 넣어주기
+            while((line = br.readLine()) != null) {
+                result += line;
+            }
+
+            gson = new Gson();
+            // 배열 형태로 리턴되기때문에 List 타입추론
+            leagueEntryDto = gson.fromJson(result, new TypeToken<List<LeagueEntryDto>>(){}.getType());
+
+            String leagueId = leagueEntryDto.get(0).getLeagueId();         // 리그이름
+            String summonerId = leagueEntryDto.get(0).getSummonerId();     // 소환사 암호화 명
+            String tier = leagueEntryDto.get(0).getTier();                 // 티어(골드, 브론즈)
+            String rank = leagueEntryDto.get(0).getRank();                 // 랭크(1,2,3,4)
+            int leaguePoints = leagueEntryDto.get(0).getLeaguePoints();    // LP
+            int wins = leagueEntryDto.get(0).getWins();                    // 승
+            int losses = leagueEntryDto.get(0).getLosses();                // 패
+
+            // 승률
+            int winningRate = (int)(((double)wins / (double)(wins + losses)) * 100);
+
+            model.addAttribute("leagueId", leagueId);
+            model.addAttribute("summonerId", summonerId);
+            model.addAttribute("tier", tier);
+            model.addAttribute("rank", rank);
+            model.addAttribute("leaguePoints", leaguePoints);
+            model.addAttribute("wins", wins);
+            model.addAttribute("losses", losses);
+            model.addAttribute("winningRate", winningRate);
 
         }
         catch(Exception e){
