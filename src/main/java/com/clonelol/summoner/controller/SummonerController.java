@@ -1,7 +1,7 @@
 package com.clonelol.summoner.controller;
 
+import com.clonelol.summoner.api.summonerapi.dto.SummonerDto;
 import com.clonelol.summoner.apidto.LeagueEntryDto;
-import com.clonelol.summoner.apidto.SummonerDto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.ui.Model;
@@ -83,6 +83,7 @@ public class SummonerController {
 
             gson = new Gson();
             // 배열 형태로 리턴되기때문에 List 타입추론
+            List<LeagueEntryDto> leagueEntryDto = null;
             leagueEntryDto = gson.fromJson(result, new TypeToken<List<LeagueEntryDto>>(){}.getType());
 
             String leagueId = leagueEntryDto.get(0).getLeagueId();         // 리그이름
