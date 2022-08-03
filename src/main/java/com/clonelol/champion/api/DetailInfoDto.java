@@ -1,6 +1,6 @@
-package com.clonelol.champion.apidto;
+package com.clonelol.champion.api;
 
-import com.clonelol.champion.apidto.property.*;
+import com.clonelol.champion.api.property.*;
 import com.clonelol.champion.entity.ChampionSkills;
 import com.clonelol.config.ApiKeyConfiguration;
 import com.clonelol.champion.entity.Champion;

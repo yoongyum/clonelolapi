@@ -1,21 +1,16 @@
 package com.clonelol.summoner.controller;
 
-import com.clonelol.summoner.apidto.SummonerDto;
+import com.clonelol.summoner.api.summonerapi.dto.SummonerDto;
 import com.google.gson.Gson;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 
 import static com.clonelol.config.ApiKeyConfiguration.DEV_KEY;

@@ -1,4 +1,4 @@
-package com.clonelol.champion.apidto.property;
+package com.clonelol.champion.api.property;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,8 +1,8 @@
-package com.clonelol.champion.controller;
+package com.clonelol.champion.api;
 
-import com.clonelol.champion.apidto.ChampInformationDto;
-import com.clonelol.champion.apidto.DetailInfoDto;
-import com.clonelol.champion.apidto.SimpleInfoDto;
+import com.clonelol.champion.api.ChampInformationDto;
+import com.clonelol.champion.api.DetailInfoDto;
+import com.clonelol.champion.api.SimpleInfoDto;
 import com.clonelol.champion.entity.Champion;
 import com.clonelol.champion.entity.Version;
 import com.clonelol.champion.repository.VersionRepository;
