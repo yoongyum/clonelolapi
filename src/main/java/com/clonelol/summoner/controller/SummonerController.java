@@ -29,8 +29,7 @@ public class SummonerController {
         BufferedReader br = null;
         // 소환사 정보
         SummonerDto summonerDto = null;
-        // 소환사 랭크 정보
-        List<LeagueEntryDto> leagueEntryDto = null;
+
 
         try{
             // RequestURL 설정하기
