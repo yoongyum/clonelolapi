@@ -1,4 +1,4 @@
-package com.clonelol.champion.apidto;
+package com.clonelol.champion.api;
 
 import lombok.Getter;
 import lombok.Setter;
