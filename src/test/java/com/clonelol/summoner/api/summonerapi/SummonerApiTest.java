@@ -17,7 +17,7 @@ class SummonerApiTest {
                 .queryParam("start", 0)
                 .queryParam("count", 100)
                 .queryParam("api_key", DEV_KEY)
-                .buildAndExpand("fwZLSwNnrgqXaNHNV2bQFkdD3jFXqb2rmzjxQyNbl_aLqmGS7ovTUh7dC5yT4_lpPowuk0Ddx-hDUw")
+                .buildAndExpand(/*PUUID*/)
                 .toUri().toString();
         System.out.println(s);
     }
