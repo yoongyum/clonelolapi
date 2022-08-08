@@ -1,6 +1,6 @@
 package com.clonelol.summoner.api.summonerapi;
 
-import com.clonelol.summoner.api.summonerapi.dto.SummonerIdInfo;
+import com.clonelol.summoner.api.summonerapi.dto.SummonerIdInfoDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
@@ -27,7 +27,7 @@ public class PuuidTest {
         System.out.println(PuuidUri.toString());
 //        assertThat(PuuidUri.toString()).isEqualTo("https://kr.api.riotgames.com/lol/summoner/v4/summoners/No-6akKz8AucSPKtV_QUM4P8sMfXen0cMGyzZ1j_v-y_bGjb?api_key=RGAPI-eb38b7d0-dde0-4b1f-bb1f-25a5ed994163");
 
-        SummonerIdInfo summonerIDinfo = restTemplate.getForObject(PuuidUri, SummonerIdInfo.class);
+        SummonerIdInfoDto summonerIDinfo = restTemplate.getForObject(PuuidUri, SummonerIdInfoDto.class);
     }
 
     private UriComponentsBuilder createUriComponent(String uri) {
