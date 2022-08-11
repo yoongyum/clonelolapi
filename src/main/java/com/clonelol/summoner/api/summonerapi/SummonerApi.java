@@ -31,12 +31,23 @@ public class SummonerApi {
     private final MatchService matchService;
     private final SummonerService summonerService;
 
+    String[] tiers = {"GOLD", "PLATINUM", "DIAMOND"};
+    String[] divisions = {"I", "II", "III", "IV"};
+
     @RequestMapping("/summoner")
-    public void searchSummonerApi(/*String tier, String division*/) throws InterruptedException {
+    public void AutoSearch() throws InterruptedException {
+        for (int page = 1; page <= 5; page++) {
+            log.info("페이지 시작 : {}", page);
+            searchSummonerApi(page, tiers[2], divisions[0]);
+        }
+    }
+
+    public void searchSummonerApi(int page, String tier, String division) throws InterruptedException {
         URI uri = createUriComponent(USER_SOLO_RANK)
                 .encode()
+                .queryParam("page", page)
                 .queryParam("api_key", DEV_KEY)
-                .buildAndExpand("DIAMOND", "I")
+                .buildAndExpand(tier, division)
                 .toUri();
 
         RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
@@ -50,7 +61,8 @@ public class SummonerApi {
 
         for (int i = 0; i < summonerIds.size(); i++) log.info("summonersId {} : {}", i, summonerIds.get(i));
 
-
+        log.info("티어[{}-{}] 페이지 : {}", tier, division, page);
+        log.info("탐색된 유저 수 : {}", summonerIds.size());
         List<SummonerIdInfoDto> summonerIDinfos = new ArrayList<>();
         for (var i = 0; i < summonerIds.size(); i++) {
             Thread.sleep(1500);
@@ -64,9 +76,9 @@ public class SummonerApi {
             summonerIDinfos.add(restTemplate.getForObject(PuuidUri, SummonerIdInfoDto.class));
         }
         for (int i = 0; i < summonerIDinfos.size(); i++) {
-            log.info("번호: {}",i);
-            log.info("SUMMONER_ID - {}",summonerIDinfos.get(i).getSummonerId());
-            log.info("PUUID - {}",summonerIDinfos.get(i).getPuuId());
+            log.info("번호: {}", i);
+            log.info("SUMMONER_ID - {}", summonerIDinfos.get(i).getSummonerId());
+            log.info("PUUID - {}", summonerIDinfos.get(i).getPuuId());
             log.info("------------------------------");
         }
         summonerService.initializeAllIdInfo(summonerIDinfos);
