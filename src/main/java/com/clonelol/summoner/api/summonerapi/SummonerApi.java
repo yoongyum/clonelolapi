@@ -1,9 +1,10 @@
 package com.clonelol.summoner.api.summonerapi;
 
 import com.clonelol.summoner.api.summonerapi.dto.SummonerApiDto;
+import com.clonelol.summoner.api.summonerapi.dto.SummonerIdInfoDto;
 import com.clonelol.summoner.entity.SummonerSimpleInfo;
-import com.clonelol.summoner.repository.SummonerSimpleInfoRepository;
 import com.clonelol.summoner.service.MatchService;
+import com.clonelol.summoner.service.SummonerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -27,12 +28,11 @@ import static java.util.Objects.requireNonNull;
 public class SummonerApi {
 
     private final RestTemplate restTemplate;
-    private final SummonerSimpleInfoRepository summonerSimpleInfoRepository;
     private final MatchService matchService;
-
+    private final SummonerService summonerService;
 
     @RequestMapping("/summoner")
-    public void searchSummonerApi(/*String tier, String division*/){
+    public void searchSummonerApi(/*String tier, String division*/) throws InterruptedException {
         URI uri = createUriComponent(USER_SOLO_RANK)
                 .encode()
                 .queryParam("api_key", DEV_KEY)
@@ -41,23 +41,45 @@ public class SummonerApi {
 
         RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
 
-        List<SummonerSimpleInfo> simpleInfoList = requireNonNull(restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<SummonerApiDto>>() {
-                }).getBody())
-                .stream()
-                .map(this::convertToEntity)
+        List<SummonerApiDto> summonerApiDtos = requireNonNull(restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<SummonerApiDto>>() {
+        }).getBody());
+
+        List<String> summonerIds = summonerApiDtos
+                .stream().map(SummonerApiDto::getSummonerId)
                 .collect(Collectors.toList());
 
-        summonerSimpleInfoRepository.saveAll(simpleInfoList);
+        for (int i = 0; i < summonerIds.size(); i++) log.info("summonersId {} : {}", i, summonerIds.get(i));
+
+
+        List<SummonerIdInfoDto> summonerIDinfos = new ArrayList<>();
+        for (var i = 0; i < summonerIds.size(); i++) {
+            Thread.sleep(1500);
+            log.info("딜레이 : {}", i);
+            URI PuuidUri = createUriComponent(ENCRYPTED_SUMMONER_ID)
+                    .encode()
+                    .queryParam("api_key", DEV_KEY)
+                    .buildAndExpand(summonerIds.get(i))
+                    .toUri();
+
+            summonerIDinfos.add(restTemplate.getForObject(PuuidUri, SummonerIdInfoDto.class));
+        }
+        for (int i = 0; i < summonerIDinfos.size(); i++) {
+            log.info("번호: {}",i);
+            log.info("SUMMONER_ID - {}",summonerIDinfos.get(i).getSummonerId());
+            log.info("PUUID - {}",summonerIDinfos.get(i).getPuuId());
+            log.info("------------------------------");
+        }
+        summonerService.initializeAllIdInfo(summonerIDinfos);
     }
 
     @RequestMapping("/match")
-    public void searchMatchApi(){
+    public void searchMatchApi() {
         URI uri = createUriComponent(MATCH_ID)
                 .encode()
-                .queryParam("queue",420)
-                .queryParam("type","ranked")
-                .queryParam("start",0)
-                .queryParam("count",100)
+                .queryParam("queue", 420)
+                .queryParam("type", "ranked")
+                .queryParam("start", 0)
+                .queryParam("count", 100)
                 .queryParam("api_key", DEV_KEY)
                 .buildAndExpand(/*puuid*/)
                 .toUri();
@@ -72,13 +94,11 @@ public class SummonerApi {
                 .fromUriString(uri);
     }
 
-    private SummonerSimpleInfo convertToEntity(SummonerApiDto dto){
+    private SummonerSimpleInfo convertToEntity(SummonerApiDto dto) {
 
         return SummonerSimpleInfo.builder()
                 .summonerId(dto.getSummonerId())
-                .queueType(dto.getQueueType())
-                .tier(dto.getTier())
-                .grade(dto.getRank())
+
                 .build();
     }
 }
