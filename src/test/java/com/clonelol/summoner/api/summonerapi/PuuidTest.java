@@ -15,7 +15,7 @@ import static com.clonelol.config.ApiKeyConfiguration.ENCRYPTED_SUMMONER_ID;
 public class PuuidTest {
 
     @Test
-    public void test(){
+    public void test() {
         RestTemplate restTemplate = new RestTemplate();
 
         URI PuuidUri = createUriComponent(ENCRYPTED_SUMMONER_ID)
