@@ -26,8 +26,7 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.9.0'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	// https://mvnrepository.com/artifact/com.h2database/h2
-	testImplementation group: 'com.h2database', name: 'h2', version: '2.1.212'
+	runtimeOnly 'com.h2database:h2'
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
