@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import static com.clonelol.config.ApiKeyConfiguration.GAME_VERSION;
+import static com.clonelol.config.ApiKeyConfiguration.*;
 
 @Slf4j
 @SpringBootTest
@@ -49,6 +49,20 @@ public class WebClientTest {
         assert list2 != null;
         log.info("최신버전: {}", list2[0]);
     }
+    @Test
+    @DisplayName("파라미터 테스트")
+    public void test3(){
+        String list = webClient.baseUrl("https://kr.api.riotgames.com").build()
+                .get()
+                .uri(uriBuilder -> uriBuilder.path("/lol/league/v4/entries/RANKED_SOLO_5x5/{tier}/{rank}")
+                            .queryParam("page",1)
+                            .queryParam("api_key", DEV_KEY)
+                            .build("DIAMOND","I"))
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
-
+        log.info(list.toString());
+    }
 }
