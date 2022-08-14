@@ -6,6 +6,9 @@ build/
 !**/src/test/**/build/
 src/main/resources/application.yml
 
+## 테스트용 yml
+src/main/resources/application-test.yml
+
 ## mySQL 정보
 src/main/resources/application-mysql.yml
 
