@@ -5,17 +5,16 @@ import com.clonelol.champion.entity.Version;
 import com.clonelol.champion.repository.VersionRepository;
 import com.clonelol.champion.service.ChampionsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.RequestEntity;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,15 +22,15 @@ import java.util.stream.Collectors;
 import static com.clonelol.config.ApiKeyConfiguration.*;
 import static java.util.Objects.requireNonNull;
 
+@Slf4j
 @Component
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class ChampionsController {
 
-    private final RestTemplate restTemplate;
+    private final WebClient.Builder webClient;
     private final ChampionsService championsService;
     private final VersionRepository versionRepository;
-    private final WebClient.Builder webBuilder;
     private final static List<Champion> freeChampion = new ArrayList<>();
 
     //서버 켜지면 버전이 최신인지 확인 후
@@ -61,7 +60,6 @@ public class ChampionsController {
                 .latestVersion(newVersion)
                 .build());
         getChampionList(newVersion);
-
         return version;
     }
 
@@ -73,29 +71,29 @@ public class ChampionsController {
     }
 
     private String[] checkChampVersion() {
-        URI uri = createUriComponent(GAME_VERSION)
-                .encode()
-                .build().toUri();
-
-        String[] result = restTemplate.getForObject(uri, String[].class);
-        return result;
+        return webClient
+                .baseUrl(GAME_VERSION).build()
+                .get()
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(String[].class)
+                .block();
     }
 
-    private void getChampionList(String version) {
-        URI uri = createUriComponent(CHAMP_INFO)
-                .encode()
-                .buildAndExpand(version)
-                .toUri();
+    public void getChampionList(String version) {
+        ChampInformationDto<SimpleInfoDto> simpleChampList = webClient
+                .baseUrl(BASE_GAME_DATA)
+                .build()
+                .get()
+                .uri(uriBuilder -> uriBuilder.path(CHAMP_INFO)
+                        .build(version)
+                ).accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<ChampInformationDto<SimpleInfoDto>>() {
+                }).block();
 
-        RequestEntity<Void> build = RequestEntity.get(uri)
-                .build();
-
-        ChampInformationDto<SimpleInfoDto> champList = restTemplate
-                .exchange(build, new ParameterizedTypeReference<ChampInformationDto<SimpleInfoDto>>() {
-                })
-                .getBody();
-
-        List<Champion> entityList = champList.getNameSet()
+        assert simpleChampList != null;
+        List<Champion> entityList = simpleChampList.getNameSet()
                 .stream()
                 .map(name -> searchChampDetail(version, name))
                 .map(DetailInfoDto::convertToEntity)
@@ -106,11 +104,10 @@ public class ChampionsController {
 
 
     // 각 챔피언의 세부정보 받아오는 API 호출 메서드
-    public DetailInfoDto searchChampDetail(String version, String champName) {
-
+    private DetailInfoDto searchChampDetail(String version, String champName) {
         return requireNonNull(
-                webBuilder
-                        .baseUrl(GAME_DATA)
+                webClient
+                        .baseUrl(BASE_GAME_DATA)
                         .build()
                         .get()
                         .uri(builder -> builder.path(CHAMP_DETAILS)
