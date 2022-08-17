@@ -1,7 +1,6 @@
 package com.clonelol.summoner.api.summonerapi;
 
 import com.clonelol.summoner.api.summonerapi.dto.SummonerApiDto;
-import com.clonelol.summoner.api.summonerapi.dto.SummonerDto;
 import com.clonelol.summoner.api.summonerapi.dto.SummonerIdInfoDto;
 import com.clonelol.summoner.entity.SummonerSimpleInfo;
 import com.clonelol.summoner.service.MatchService;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -25,7 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
-import static java.util.Objects.requireNonNull;
 
 @Slf4j
 @Controller
@@ -36,7 +33,6 @@ public class SummonerApi {
     private final RestTemplate restTemplate;
     private final MatchService matchService;
     private final SummonerService summonerService;
-    private final WebClient.Builder webClient;
 
     String[] tiers = {"GOLD", "PLATINUM", "DIAMOND"};
     String[] divisions = {"I", "II", "III", "IV"};
@@ -51,11 +47,11 @@ public class SummonerApi {
 
     public void searchSummonerApi(int page, String tier, String division) throws InterruptedException {
         List<SummonerApiDto> summonerApiDtos = webClient
-                .baseUrl(USER_SOLO_RANK)
+                .baseUrl(BASE_KOR_API)
                 .build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(USER_SOLO_RANK_DETAIL)
+                        .path(USER_SOLO_RANK)
                         .queryParam("page", page)
                         .queryParam("api_key", DEV_KEY)
                         .build(tier, division))
@@ -96,32 +92,6 @@ public class SummonerApi {
 
     }
 
-    @RequestMapping("/match")
-    public void searchMatchApi() {
-
-        matchService.initializeAll(
-                webClient.baseUrl(MATCH_ID)
-                .build()
-                .get()
-                .uri(builder -> builder
-                        .queryParams(matchData())
-                        .build("bw5kpdEifIxX_wHkal3nLerwt1Ik87wYXMhM-wHRWxdGbtZfrK8PPNtDU6Ebqk3G-oq7Zy03KliNYw")
-                )
-                .retrieve()
-                .bodyToMono(ArrayList.class)
-                .block()
-        );
-    }
-
-    private MultiValueMap<String, String> matchData() {
-        MultiValueMap<String, String> mv = new LinkedMultiValueMap<>();
-        mv.set("queue", "420");
-        mv.set("type", "ranked");
-        mv.set("start", "0");
-        mv.set("count", "100");
-        mv.set("api_key", DEV_KEY);
-        return mv;
-    }
 
 
     private UriComponentsBuilder createUriComponent(String uri) {
