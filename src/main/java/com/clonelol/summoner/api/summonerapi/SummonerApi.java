@@ -1,6 +1,7 @@
 package com.clonelol.summoner.api.summonerapi;
 
 import com.clonelol.summoner.api.summonerapi.dto.SummonerApiDto;
+import com.clonelol.summoner.api.summonerapi.dto.SummonerDto;
 import com.clonelol.summoner.api.summonerapi.dto.SummonerIdInfoDto;
 import com.clonelol.summoner.entity.SummonerSimpleInfo;
 import com.clonelol.summoner.service.MatchService;
@@ -8,10 +9,12 @@ import com.clonelol.summoner.service.SummonerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -27,6 +30,7 @@ import static java.util.Objects.requireNonNull;
 @RequiredArgsConstructor
 public class SummonerApi {
 
+    private final WebClient.Builder webClient;
     private final RestTemplate restTemplate;
     private final MatchService matchService;
     private final SummonerService summonerService;
@@ -36,30 +40,34 @@ public class SummonerApi {
 
     @RequestMapping("/summoner")
     public void AutoSearch() throws InterruptedException {
-        for (int page = 1; page <= 5; page++) {
+        for (int page = 1; page <= 1; page++) {
             log.info("페이지 시작 : {}", page);
             searchSummonerApi(page, tiers[2], divisions[0]);
         }
     }
 
     public void searchSummonerApi(int page, String tier, String division) throws InterruptedException {
-        URI uri = createUriComponent(USER_SOLO_RANK)
-                .encode()
-                .queryParam("page", page)
-                .queryParam("api_key", DEV_KEY)
-                .buildAndExpand(tier, division)
-                .toUri();
-
-        RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
-
-        List<SummonerApiDto> summonerApiDtos = requireNonNull(restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<SummonerApiDto>>() {
-        }).getBody());
+        List<SummonerApiDto> summonerApiDtos = webClient
+                .baseUrl(USER_SOLO_RANK)
+                .build()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(USER_SOLO_RANK_DETAIL)
+                        .queryParam("page", page)
+                        .queryParam("api_key", DEV_KEY)
+                        .build(tier, division))
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<SummonerApiDto>>() {
+                }).block();
 
         List<String> summonerIds = summonerApiDtos
                 .stream().map(SummonerApiDto::getSummonerId)
                 .collect(Collectors.toList());
 
-        for (int i = 0; i < summonerIds.size(); i++) log.info("summonersId {} : {}", i, summonerIds.get(i));
+        for (int i = 0; i < summonerIds.size(); i++) {
+            log.info("summonersId {} : {}", i, summonerIds.get(i));
+        }
 
         log.info("티어[{}-{}] 페이지 : {}", tier, division, page);
         log.info("탐색된 유저 수 : {}", summonerIds.size());
@@ -82,6 +90,7 @@ public class SummonerApi {
             log.info("------------------------------");
         }
         summonerService.initializeAllIdInfo(summonerIDinfos);
+
     }
 
     @RequestMapping("/match")
