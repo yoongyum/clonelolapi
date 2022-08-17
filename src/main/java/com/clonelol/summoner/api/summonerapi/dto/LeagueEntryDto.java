@@ -1,4 +1,4 @@
-package com.clonelol.summoner.apidto;
+package com.clonelol.summoner.api.summonerapi.dto;
 
 import lombok.*;
 

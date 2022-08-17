@@ -11,17 +11,20 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
+import static java.util.Objects.requireNonNull;
 
 @Slf4j
 @Component
+@RestController
 @RequiredArgsConstructor
 public class ChampionsController {
 
@@ -99,17 +102,19 @@ public class ChampionsController {
         championsService.initializeAll(entityList);
     }
 
+
     // 각 챔피언의 세부정보 받아오는 API 호출 메서드
     private DetailInfoDto searchChampDetail(String version, String champName) {
-        return Objects.requireNonNull(webClient
-                .baseUrl(BASE_GAME_DATA)
-                .build()
-                .get()
-                .uri(builder -> builder.path(CHAMP_DETAILS)
-                        .build(version, champName))
-                .retrieve()
+        return requireNonNull(
+                webClient
+                        .baseUrl(BASE_GAME_DATA)
+                        .build()
+                        .get()
+                        .uri(builder -> builder.path(CHAMP_DETAILS)
+                                .build(version, champName))
+                        .retrieve())
                 .bodyToMono(new ParameterizedTypeReference<ChampInformationDto<DetailInfoDto>>() {
                 })
-                .block()).getValue(champName);
+                .block().getValue(champName);
     }
 }
