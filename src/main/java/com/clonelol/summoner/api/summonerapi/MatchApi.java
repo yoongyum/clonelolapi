@@ -1,19 +1,23 @@
 package com.clonelol.summoner.api.summonerapi;
 
 import com.clonelol.summoner.api.summonerapi.dto.SimpleMatchDto;
+import com.clonelol.summoner.api.summonerapi.dto.property.infoProperty.Participant;
 import com.clonelol.summoner.service.MatchService;
 import com.clonelol.summoner.service.SummonerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import static com.clonelol.config.ApiKeyConfiguration.BASE_ASIA_API;
-import static com.clonelol.config.ApiKeyConfiguration.MATCH_INFO;
+import java.util.List;
+
+import static com.clonelol.config.ApiKeyConfiguration.*;
 
 
 @Slf4j
 @RequiredArgsConstructor
+@Controller
 public class MatchApi {
     //https://asia.api.riotgames.com
     // /lol/match/v5/matches/KR_6034648402?api_key=RGAPI-eb38b7d0-dde0-4b1f-bb1f-25a5ed994163
@@ -24,13 +28,25 @@ public class MatchApi {
     @GetMapping("/matchData")
     public void getMatchData() {
         String matchId = "KR_6034648402";
-        webclient.baseUrl(BASE_ASIA_API)
+        SimpleMatchDto result = webclient.baseUrl(BASE_ASIA_API)
                 .build()
                 .get()
                 .uri(uriBuilder -> uriBuilder.path(MATCH_INFO)
+                        .queryParam("api_key",DEV_KEY)
                         .build(matchId)
                 ).retrieve()
                 .bodyToMono(SimpleMatchDto.class)
                 .block();
+
+        assert result != null;
+        List<Participant> participants = result.getInfo().getParticipants();
+
+        for (var player : participants) {
+            log.info("플레이어 이름: {}", player.getSummonerName());
+            log.info("플레이어 PUUID: {}", player.getPuuid());
+            log.info("사용한 챔피언: {}", player.getChampionName());
+            log.info("승패 여부: {}", player.getWin());
+            log.info("=======================================");
+        }
     }
 }
