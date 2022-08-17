@@ -12,6 +12,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -64,17 +65,25 @@ public class SummonerApi {
         log.info("티어[{}-{}] 페이지 : {}", tier, division, page);
         log.info("탐색된 유저 수 : {}", summonerIds.size());
         List<SummonerIdInfoDto> summonerIDinfos = new ArrayList<>();
-        for (var i = 0; i < summonerIds.size(); i++) {
+        for (var Id : summonerIds) {
             Thread.sleep(1500);
-            log.info("딜레이 : {}", i);
-            URI PuuidUri = createUriComponent(ENCRYPTED_SUMMONER_ID)
-                    .encode()
-                    .queryParam("api_key", DEV_KEY)
-                    .buildAndExpand(summonerIds.get(i))
-                    .toUri();
+            log.info("딜레이 : {}", Id);
 
-            summonerIDinfos.add(restTemplate.getForObject(PuuidUri, SummonerIdInfoDto.class));
+            summonerIDinfos.add(
+                    WebClient
+                    .builder()
+                    .baseUrl("https://kr.api.riotgames.com/")
+                    .build()
+                    .get()
+                    .uri(uriBuilder -> uriBuilder.path(ENCRYPTED_SUMMONER_ID)
+                            .queryParam("api_key",DEV_KEY)
+                            .build(Id))
+                    .retrieve()
+                    .bodyToMono(SummonerIdInfoDto.class)
+                    .block()
+            );
         }
+
         for (int i = 0; i < summonerIDinfos.size(); i++) {
             log.info("번호: {}", i);
             log.info("SUMMONER_ID - {}", summonerIDinfos.get(i).getSummonerId());
