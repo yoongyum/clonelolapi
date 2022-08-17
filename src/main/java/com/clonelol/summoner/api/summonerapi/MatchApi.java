@@ -1,8 +1,5 @@
 package com.clonelol.summoner.api.summonerapi;
 
-<<<<<<< HEAD
-public class MatchApi {
-=======
 import com.clonelol.summoner.api.summonerapi.dto.SimpleMatchDto;
 import com.clonelol.summoner.service.MatchService;
 import com.clonelol.summoner.service.SummonerService;
@@ -18,8 +15,6 @@ import static com.clonelol.config.ApiKeyConfiguration.MATCH_INFO;
 @Slf4j
 @RequiredArgsConstructor
 public class MatchApi {
-    //https://asia.api.riotgames.com
-    // /lol/match/v5/matches/KR_6034648402?api_key=RGAPI-eb38b7d0-dde0-4b1f-bb1f-25a5ed994163
     private final WebClient.Builder webclient;
     private final MatchService matchService;
     private final SummonerService summonerService;
@@ -36,5 +31,4 @@ public class MatchApi {
                 .bodyToMono(SimpleMatchDto.class)
                 .block();
     }
->>>>>>> origin/master
 }
