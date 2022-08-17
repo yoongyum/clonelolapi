@@ -1,7 +1,9 @@
 package com.clonelol.summoner.api.summonerapi.dto.property.infoProperty;
 
 import com.clonelol.summoner.api.summonerapi.dto.property.infoProperty.participantProperty.Perks;
+import lombok.Data;
 
+@Data
 public class Participant {
     private int assist;
     private int baronKills;
@@ -55,7 +57,7 @@ public class Participant {
     private int itemsPurchased;
     private int killingSprees;
     private int kills;
-    private int lane;
+    private String lane;
     private int largestCriticalStrike;
     private int largestKillingSpree;
     private int largestMultiKill;
