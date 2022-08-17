@@ -3,9 +3,11 @@ package com.clonelol.summoner.api.summonerapi.dto.property;
 import com.clonelol.summoner.api.summonerapi.dto.property.infoProperty.Participant;
 import com.clonelol.summoner.api.summonerapi.dto.property.infoProperty.Team;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Info {
     private Long gameCreation;
