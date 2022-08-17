@@ -10,8 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -30,6 +33,7 @@ public class SummonerApi {
     private final RestTemplate restTemplate;
     private final MatchService matchService;
     private final SummonerService summonerService;
+    private final WebClient.Builder webClient;
 
     String[] tiers = {"GOLD", "PLATINUM", "DIAMOND"};
     String[] divisions = {"I", "II", "III", "IV"};
@@ -86,18 +90,29 @@ public class SummonerApi {
 
     @RequestMapping("/match")
     public void searchMatchApi() {
-        URI uri = createUriComponent(MATCH_ID)
-                .encode()
-                .queryParam("queue", 420)
-                .queryParam("type", "ranked")
-                .queryParam("start", 0)
-                .queryParam("count", 100)
-                .queryParam("api_key", DEV_KEY)
-                .buildAndExpand(/*puuid*/)
-                .toUri();
 
-        List<String> result = restTemplate.getForObject(uri, ArrayList.class);
-        matchService.initializeAll(result);
+        matchService.initializeAll(
+                webClient.baseUrl(MATCH_ID)
+                .build()
+                .get()
+                .uri(builder -> builder
+                        .queryParams(matchData())
+                        .build("bw5kpdEifIxX_wHkal3nLerwt1Ik87wYXMhM-wHRWxdGbtZfrK8PPNtDU6Ebqk3G-oq7Zy03KliNYw")
+                )
+                .retrieve()
+                .bodyToMono(ArrayList.class)
+                .block()
+        );
+    }
+
+    private MultiValueMap<String, String> matchData() {
+        MultiValueMap<String, String> mv = new LinkedMultiValueMap<>();
+        mv.set("queue", "420");
+        mv.set("type", "ranked");
+        mv.set("start", "0");
+        mv.set("count", "100");
+        mv.set("api_key", DEV_KEY);
+        return mv;
     }
 
 
