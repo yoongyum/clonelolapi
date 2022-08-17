@@ -1,7 +1,7 @@
 package com.clonelol.summoner.controller;
 
+import com.clonelol.summoner.api.summonerapi.dto.LeagueEntryDto;
 import com.clonelol.summoner.api.summonerapi.dto.SummonerDto;
-import com.clonelol.summoner.apidto.LeagueEntryDto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.ui.Model;
