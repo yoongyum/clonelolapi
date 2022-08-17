@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,15 +82,15 @@ public class ChampionsController {
 
     public void getChampionList(String version) {
         ChampInformationDto<SimpleInfoDto> simpleChampList = webClient
-                        .baseUrl(BASE_GAME_DATA)
-                        .build()
-                        .get()
-                        .uri(uriBuilder -> uriBuilder.path(CHAMP_INFO)
+                .baseUrl(BASE_GAME_DATA)
+                .build()
+                .get()
+                .uri(uriBuilder -> uriBuilder.path(CHAMP_INFO)
                         .build(version)
                 ).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ChampInformationDto<SimpleInfoDto>>() {})
-                .block();
+                .bodyToMono(new ParameterizedTypeReference<ChampInformationDto<SimpleInfoDto>>() {
+                }).block();
 
         assert simpleChampList != null;
         List<Champion> entityList = simpleChampList.getNameSet()
@@ -106,14 +107,14 @@ public class ChampionsController {
     private DetailInfoDto searchChampDetail(String version, String champName) {
         return requireNonNull(
                 webClient
-                .baseUrl(BASE_GAME_DATA)
-                .build()
-                .get()
-                .uri(builder -> builder.path(CHAMP_DETAILS)
-                        .build(version, champName))
-                .retrieve()
+                        .baseUrl(BASE_GAME_DATA)
+                        .build()
+                        .get()
+                        .uri(builder -> builder.path(CHAMP_DETAILS)
+                                .build(version, champName))
+                        .retrieve())
                 .bodyToMono(new ParameterizedTypeReference<ChampInformationDto<DetailInfoDto>>() {
                 })
-                .block()).getValue(champName);
+                .block().getValue(champName);
     }
 }

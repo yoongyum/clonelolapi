@@ -19,7 +19,7 @@ public class MatchSimpleInfo {
     
     private String matchId;
     
-    private Boolean checked = false;    //이미 사용한 매치 데이터인지 확인 - 사용한 뒤에는 true로 바꿔줘야함
+    private final Boolean checked = false;    //이미 사용한 매치 데이터인지 확인 - 사용한 뒤에는 true로 바꿔줘야함
 
     public MatchSimpleInfo(String matchId) {
         this.matchId = matchId;
