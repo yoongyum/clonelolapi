@@ -3,21 +3,16 @@ package com.clonelol.summoner.api.summonerapi;
 import com.clonelol.summoner.api.summonerapi.dto.SummonerApiDto;
 import com.clonelol.summoner.api.summonerapi.dto.SummonerIdInfoDto;
 import com.clonelol.summoner.entity.SummonerSimpleInfo;
-import com.clonelol.summoner.service.MatchService;
 import com.clonelol.summoner.service.SummonerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,8 +25,6 @@ import static com.clonelol.config.ApiKeyConfiguration.*;
 public class SummonerApi {
 
     private final WebClient.Builder webClient;
-    private final RestTemplate restTemplate;
-    private final MatchService matchService;
     private final SummonerService summonerService;
 
     String[] tiers = {"GOLD", "PLATINUM", "DIAMOND"};
@@ -41,7 +34,7 @@ public class SummonerApi {
     public void AutoSearch() throws InterruptedException {
         for (int page = 1; page <= 1; page++) {
             log.info("페이지 시작 : {}", page);
-            searchSummonerApi(page, tiers[2], divisions[0]);
+            searchSummonerApi(page, tiers[2], divisions[3]);
         }
     }
 
@@ -78,7 +71,7 @@ public class SummonerApi {
             summonerIDinfos.add(
                     WebClient
                     .builder()
-                    .baseUrl("https://kr.api.riotgames.com/")
+                    .baseUrl(BASE_KOR_API)
                     .build()
                     .get()
                     .uri(uriBuilder -> uriBuilder.path(ENCRYPTED_SUMMONER_ID)

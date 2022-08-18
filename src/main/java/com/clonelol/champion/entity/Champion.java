@@ -1,12 +1,12 @@
 package com.clonelol.champion.entity;
 
+import com.clonelol.summoner.entity.MatchSummary;
 import com.clonelol.web.dto.RotationResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +34,13 @@ public class Champion {
 
     @OneToMany(mappedBy = "champion", cascade = ALL)
     private final List<ChampionSkills> skills = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "champion", cascade = ALL)
     private final List<ChampionSkins> skins = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name = "match_summary_id")
+    private final List<MatchSummary> matchSummaries = new ArrayList<>();
 
     @Builder
     public Champion(Long id, String nameEn, String nameKr, String title, String portrait, ChampionStats championStats, List<ChampionSkills> skills, List<ChampionSkins> skins) {
@@ -50,14 +54,14 @@ public class Champion {
         setSkins(skins);
     }
 
-    private void setSkills(List<ChampionSkills> championSkills){
+    private void setSkills(List<ChampionSkills> championSkills) {
         this.skills.addAll(championSkills);
-        this.skills.forEach( skill -> skill.setChampion(this));
+        this.skills.forEach(skill -> skill.setChampion(this));
     }
 
     private void setSkins(List<ChampionSkins> championSkins) {
-    	this.skins.addAll(championSkins);
-    	this.skins.forEach( skin -> skin.setChampion(this));
+        this.skins.addAll(championSkins);
+        this.skins.forEach(skin -> skin.setChampion(this));
     }
 
     //로테이션 응답 Dto로 변환
