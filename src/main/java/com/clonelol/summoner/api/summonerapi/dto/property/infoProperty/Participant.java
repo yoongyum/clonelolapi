@@ -57,7 +57,7 @@ public class Participant {
     private int itemsPurchased;
     private int killingSprees;
     private int kills;
-    private int lane;
+    private String lane;
     private int largestCriticalStrike;
     private int largestKillingSpree;
     private int largestMultiKill;
