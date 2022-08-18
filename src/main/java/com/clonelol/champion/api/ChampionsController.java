@@ -11,6 +11,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -116,5 +117,18 @@ public class ChampionsController {
                 .bodyToMono(new ParameterizedTypeReference<ChampInformationDto<DetailInfoDto>>() {
                 })
                 .block().getValue(champName);
+    }
+
+    @GetMapping("/rotation")
+    public void rotation(){
+        ChampRotationDto rotationDto = webClient.baseUrl(BASE_KOR_API)
+                .build()
+                .get()
+                .uri(uriBuilder -> uriBuilder.path(CHAMP_ROTATIONS)
+                        .queryParam("api_key", DEV_KEY).build())
+                .retrieve() // 응답
+                .bodyToMono(ChampRotationDto.class)
+                .block();
+        log.info("Rotation Info {}",rotationDto);
     }
 }
