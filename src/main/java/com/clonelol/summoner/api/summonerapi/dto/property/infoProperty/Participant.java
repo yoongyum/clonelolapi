@@ -1,7 +1,9 @@
 package com.clonelol.summoner.api.summonerapi.dto.property.infoProperty;
 
 import com.clonelol.summoner.api.summonerapi.dto.property.infoProperty.participantProperty.Perks;
+import lombok.Getter;
 
+@Getter
 public class Participant {
     private int assist;
     private int baronKills;
