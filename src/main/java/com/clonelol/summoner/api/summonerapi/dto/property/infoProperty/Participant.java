@@ -10,7 +10,7 @@ public class Participant {
     private int bountyLevel;
     private int champExperience;
     private int champLevel;
-    private int championId;
+    private Long championId;
     private String championName;
 
     /*
