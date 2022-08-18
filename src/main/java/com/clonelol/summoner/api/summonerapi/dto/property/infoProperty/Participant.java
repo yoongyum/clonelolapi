@@ -10,7 +10,7 @@ public class Participant {
     private int bountyLevel;
     private int champExperience;
     private int champLevel;
-    private int championId;
+    private Long championId;
     private String championName;
 
     /*
@@ -57,7 +57,7 @@ public class Participant {
     private int itemsPurchased;
     private int killingSprees;
     private int kills;
-    private int lane;
+    private String lane;
     private int largestCriticalStrike;
     private int largestKillingSpree;
     private int largestMultiKill;

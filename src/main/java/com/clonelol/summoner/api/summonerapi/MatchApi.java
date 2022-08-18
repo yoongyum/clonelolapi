@@ -1,6 +1,7 @@
 package com.clonelol.summoner.api.summonerapi;
 
 import com.clonelol.summoner.api.summonerapi.dto.LeagueEntryDto;
+import com.clonelol.summoner.api.summonerapi.dto.MatchSummaryDto;
 import com.clonelol.summoner.api.summonerapi.dto.SimpleMatchDto;
 import com.clonelol.summoner.api.summonerapi.dto.property.infoProperty.Participant;
 import com.clonelol.summoner.service.MatchService;
@@ -12,6 +13,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import static com.clonelol.config.ApiKeyConfiguration.*;
 
 @Slf4j
 @RequiredArgsConstructor
+@RestController
 public class MatchApi {
     private final WebClient.Builder webClient;
     private final MatchService matchService;
@@ -30,11 +33,12 @@ public class MatchApi {
 
     @GetMapping("/matchData")
     public void getMatchData() {
-        String matchId = "KR_6034648402";
+        String matchId = "KR_6080890757";
         SimpleMatchDto matchDto = webClient.baseUrl(BASE_ASIA_API)
                 .build()
                 .get()
                 .uri(uriBuilder -> uriBuilder.path(MATCH_INFO)
+                        .queryParam("api_key", DEV_KEY)
                         .build(matchId)
                 ).retrieve()
                 .bodyToMono(SimpleMatchDto.class)
@@ -47,7 +51,9 @@ public class MatchApi {
                 .map(Participant::getSummonerId)
                 .collect(Collectors.toList());
 
+        int sum = 0;
         for (var id : summonerIds) {
+            log.info("소환사 아이디:{}", id);
             LeagueEntryDto entryDto = webClient.baseUrl(BASE_KOR_API)
                     .build()
                     .get()
@@ -58,9 +64,20 @@ public class MatchApi {
                     .bodyToMono(new ParameterizedTypeReference<ArrayList<LeagueEntryDto>>() {
                     })
                     .block().get(0);
-            entryDto.getTier();
-            entryDto.getRank();
+
+            sum += calculator(entryDto.getTierScore(),entryDto.getRankScore());
+
         }
+        int avgOfTier = sum/10;
+
+        List<MatchSummaryDto> matchSummaryDtos = matchDto.getInfo().getParticipants().stream().map(participant -> {
+
+            return new MatchSummaryDto(participant.getPuuid()
+                    , participant.getChampionId()
+                    , participant.getWin(), avgOfTier);
+        }).collect(Collectors.toList());
+
+        matchService.initializeAllForSummary(matchSummaryDtos);
 
     }
 
@@ -80,6 +97,10 @@ public class MatchApi {
         );
     }
 
+    private int calculator(int tier, int rank) {
+        System.out.println(tier+rank);
+        return tier+rank;
+    }
 
     private MultiValueMap<String, String> matchData() {
         MultiValueMap<String, String> mv = new LinkedMultiValueMap<>();

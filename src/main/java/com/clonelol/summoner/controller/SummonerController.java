@@ -88,8 +88,8 @@ public class SummonerController {
 
             String leagueId = leagueEntryDto.get(0).getLeagueId();         // 리그이름
             String summonerId = leagueEntryDto.get(0).getSummonerId();     // 소환사 암호화 명
-            String tier = leagueEntryDto.get(0).getTier();                 // 티어(골드, 브론즈)
-            String rank = leagueEntryDto.get(0).getRank();                 // 랭크(1,2,3,4)
+            String tier = leagueEntryDto.get(0).getTier().getKey();                 // 티어(골드, 브론즈)
+            String rank = leagueEntryDto.get(0).getRank().getKey();                 // 랭크(1,2,3,4)
             int leaguePoints = leagueEntryDto.get(0).getLeaguePoints();    // LP
             int wins = leagueEntryDto.get(0).getWins();                    // 승
             int losses = leagueEntryDto.get(0).getLosses();                // 패
