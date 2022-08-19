@@ -1,5 +1,6 @@
 package com.clonelol.champion.entity;
 
+import com.clonelol.summoner.entity.Ban;
 import com.clonelol.summoner.entity.MatchSummary;
 import com.clonelol.web.dto.RotationResponse;
 import lombok.Builder;
