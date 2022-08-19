@@ -33,10 +33,9 @@ public class SummonerController {
 
         try{
             // RequestURL 설정하기
-            String urlstr = SUMMONER_SEARCH + summonerName.replace(" ", "") +
-                    "?api_key=" + DEV_KEY;
+            String urlStr = SUMMONER_SEARCH + summonerName.replace(" ", "") + "?api_key=" + DEV_KEY;
 
-            URL url = new URL(urlstr);
+            URL url = new URL(urlStr);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             // GET 방식으로 데이터를 가져오기
             urlConnection.setRequestMethod("GET");
@@ -65,8 +64,8 @@ public class SummonerController {
             model.addAttribute("name",name);
 
             // 랭크정보 불러 오기
-            urlstr = SUMMONER_DETAIL + id + "?api_key=" + DEV_KEY;
-            url = new URL(urlstr);
+            urlStr = SUMMONER_DETAIL + id + "?api_key=" + DEV_KEY;
+            url = new URL(urlStr);
             result = "";
             line = null;
 
