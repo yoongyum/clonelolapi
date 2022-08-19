@@ -8,9 +8,6 @@ import lombok.Getter;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SimpleMatchDto {
-
     private Metadata metadata;
-
     private Info info;
-
 }
