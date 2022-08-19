@@ -25,11 +25,7 @@ public class LeagueEntryDto {
     private boolean freshBlood;
     private boolean inactive;
 
-    public int getTierScore(){
-        return tier.getValue();
-    }
-
-    public int getRankScore(){
-        return rank.getValue();
+    public int getSum() {
+        return rank.getValue() + tier.getValue();
     }
 }
