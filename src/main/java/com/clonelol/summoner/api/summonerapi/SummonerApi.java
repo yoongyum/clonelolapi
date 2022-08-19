@@ -2,7 +2,6 @@ package com.clonelol.summoner.api.summonerapi;
 
 import com.clonelol.summoner.api.summonerapi.dto.SummonerApiDto;
 import com.clonelol.summoner.api.summonerapi.dto.SummonerIdInfoDto;
-import com.clonelol.summoner.entity.SummonerSimpleInfo;
 import com.clonelol.summoner.service.SummonerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,20 +89,5 @@ public class SummonerApi {
         }
         summonerService.initializeAllIdInfo(summonerIDinfos);
 
-    }
-
-
-
-    private UriComponentsBuilder createUriComponent(String uri) {
-        return UriComponentsBuilder
-                .fromUriString(uri);
-    }
-
-    private SummonerSimpleInfo convertToEntity(SummonerApiDto dto) {
-
-        return SummonerSimpleInfo.builder()
-                .summonerId(dto.getSummonerId())
-
-                .build();
     }
 }
