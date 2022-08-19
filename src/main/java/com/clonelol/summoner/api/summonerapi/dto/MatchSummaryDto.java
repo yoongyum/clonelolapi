@@ -1,5 +1,6 @@
 package com.clonelol.summoner.api.summonerapi.dto;
 
+import com.clonelol.summoner.api.summonerapi.dto.property.infoProperty.Participant;
 import com.clonelol.summoner.entity.MatchSummary;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,10 +13,10 @@ public class MatchSummaryDto {
     private Boolean matchResult;    //win: true or lose: false
     private int tier;
 
-    public MatchSummaryDto(String puuId, Long champId, Boolean matchResult, int tier) {
-        this.puuId = puuId;
-        this.champId = champId;
-        this.matchResult = matchResult;
+    public MatchSummaryDto(Participant participant, int tier) {
+        this.puuId = participant.getPuuid();
+        this.champId = participant.getChampionId();
+        this.matchResult = participant.getWin();
         this.tier = tier;
     }
 
