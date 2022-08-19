@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -38,5 +39,12 @@ public class SummonerService {
 //            summonerIdInfoRepository.findById(summonerIdInfoDto.getSummonerId())
 //                    .orElseGet(() -> summonerIdInfoRepository.save(summonerIdInfoDto.convertToEntity()));
 //        });
+    }
+
+    public List<String> puuIdList() {
+        return summonerIdInfoRepository.findAll()
+                .stream()
+                .map(SummonerIdInfo::getPuuId)
+                .collect(Collectors.toList());
     }
 }
