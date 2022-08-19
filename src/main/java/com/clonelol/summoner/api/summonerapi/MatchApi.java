@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
@@ -37,10 +38,12 @@ public class MatchApi {
         SimpleMatchDto matchDto = webClient.baseUrl(BASE_ASIA_API)
                 .build()
                 .get()
-                .uri(uriBuilder -> uriBuilder.path(MATCH_INFO)
-                        .queryParam("api_key", DEV_KEY)
-                        .build(matchId)
-                ).retrieve()
+                .uri(
+                        uriBuilder -> uriBuilder.path(MATCH_INFO)
+                                .queryParam("api_key", DEV_KEY)
+                                .build(matchId)
+                )
+                .retrieve()
                 .bodyToMono(SimpleMatchDto.class)
                 .block();
 
@@ -53,53 +56,54 @@ public class MatchApi {
 
         int sum = 0;
         for (var id : summonerIds) {
-            log.info("소환사 아이디:{}", id);
-            LeagueEntryDto entryDto = webClient.baseUrl(BASE_KOR_API)
-                    .build()
-                    .get()
-                    .uri(uriBuilder -> uriBuilder.path("/lol/league/v4/entries/by-summoner/{summonerId}")
-                            .queryParam("api_key", DEV_KEY)
-                            .build(id)
-                    ).retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<ArrayList<LeagueEntryDto>>() {
-                    })
-                    .block().get(0);
-
-            sum += calculator(entryDto.getTierScore(),entryDto.getRankScore());
-
+            sum = getLeagueEntryDto(id)
+                    .getSum();
         }
-        int avgOfTier = sum/10;
+        int avgOfTier = sum / 10;
 
-        List<MatchSummaryDto> matchSummaryDtos = matchDto.getInfo().getParticipants().stream().map(participant -> {
-
-            return new MatchSummaryDto(participant.getPuuid()
-                    , participant.getChampionId()
-                    , participant.getWin(), avgOfTier);
-        }).collect(Collectors.toList());
+        List<MatchSummaryDto> matchSummaryDtos = matchDto.getInfo().getParticipants()
+                .stream()
+                .map(participant -> new MatchSummaryDto(participant, avgOfTier))
+                .collect(Collectors.toList());
 
         matchService.initializeAllForSummary(matchSummaryDtos);
 
     }
 
-    @RequestMapping("/match")
-    public void searchMatchApi(String puuId) {
-        matchService.initializeAll(
-                webClient.baseUrl(BASE_ASIA_API)
-                        .build()
-                        .get()
-                        .uri(builder -> builder.path(MATCH_ID)
-                                .queryParams(matchData())
-                                .build(puuId)
-                        )
-                        .retrieve()
-                        .bodyToMono(ArrayList.class)
-                        .block()
-        );
+    private LeagueEntryDto getLeagueEntryDto(String id) {
+        return webClient.baseUrl(BASE_KOR_API)
+                .build()
+                .get()
+                .uri(
+                        uriBuilder -> uriBuilder.path("/lol/league/v4/entries/by-summoner/{summonerId}")
+                                .queryParam("api_key", DEV_KEY)
+                                .build(id)
+                )
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<ArrayList<LeagueEntryDto>>() {
+                })
+                .block().get(0);
     }
 
-    private int calculator(int tier, int rank) {
-        System.out.println(tier+rank);
-        return tier+rank;
+    public void saveMatch() {
+        summonerService.puuIdList()
+                .forEach(this::searchMatchApi);
+    }
+
+//    @RequestMapping("/match")
+    public void searchMatchApi(String puuId) {
+            matchService.initializeAll(
+                    Objects.requireNonNull(webClient.baseUrl(BASE_ASIA_API)
+                            .build()
+                            .get()
+                            .uri(builder -> builder.path(MATCH_ID)
+                                    .queryParams(matchData())
+                                    .build(puuId)
+                            )
+                            .retrieve()
+                            .bodyToMono(ArrayList.class)
+                            .block())
+        );
     }
 
     private MultiValueMap<String, String> matchData() {
@@ -111,4 +115,7 @@ public class MatchApi {
         mv.set("api_key", DEV_KEY);
         return mv;
     }
+
+
+
 }
