@@ -1,39 +1,42 @@
 package com.clonelol.summoner.controller;
 
+import com.clonelol.champion.entity.Version;
+import com.clonelol.config.VersionCheck;
 import com.clonelol.summoner.api.summonerapi.dto.LeagueEntryDto;
 import com.clonelol.summoner.api.summonerapi.dto.SummonerDto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
+import static com.clonelol.config.VersionCheck.profileiconVersion;
 
-@RestController
+@Controller
 public class SummonerController {
 
     // 소환사 전적검색
-    @GetMapping("/summoner/search/{summonerName}")
-    public String searchSummoner(@PathVariable("summonerName") String summonerName, Model model, HttpServletRequest req){
-
+    @PostMapping("/summoners")
+    public String searchSummoner(@RequestParam String summonerName , Model model, HttpSession session){
+        VersionCheck.checkVersion();
         String result = "", line;
         BufferedReader br = null;
         // 소환사 정보
         SummonerDto summonerDto = null;
 
-
         try{
             // RequestURL 설정하기
-            String urlstr = SUMMONER_SEARCH + summonerName.replace(" ", "") +
+            String urlstr = BASE_KOR_API + SUMMONER_SEARCH + summonerName.replace(" ", "") +
                     "?api_key=" + DEV_KEY;
 
             URL url = new URL(urlstr);
@@ -60,12 +63,9 @@ public class SummonerController {
             String puuid = summonerDto.getPuuid();                  // 소환사 puuid
             long summonerLevel = summonerDto.getSummonerLevel();    // 소환사 레벨
 
-            model.addAttribute("profileIconId",profileIconId);
-            model.addAttribute("summonerLevel",summonerLevel);
-            model.addAttribute("name",name);
 
             // 랭크정보 불러 오기
-            urlstr = SUMMONER_DETAIL + id + "?api_key=" + DEV_KEY;
+            urlstr = BASE_KOR_API + SUMMONER_DETAIL + id + "?api_key=" + DEV_KEY;
             url = new URL(urlstr);
             result = "";
             line = null;
@@ -106,10 +106,23 @@ public class SummonerController {
             model.addAttribute("losses", losses);
             model.addAttribute("winningRate", winningRate);
 
+            String profileIcon = BASE_GAME_DATA + "/" + profileiconVersion + "/img/profileicon/" + profileIconId + ".png";
+            model.addAttribute("profileIcon",profileIcon);
+            model.addAttribute("summonerLevel",summonerLevel);
+            model.addAttribute("name",name);
+
         }
+//        catch (FileNotFoundException fe){
+//
+//        }
+//        catch (IndexOutOfBoundsException ie){
+//
+//        }
         catch(Exception e){
             e.printStackTrace();
+            return "index";
         }
-        return "/";
+        return "searchMain";
     }
+
 }
