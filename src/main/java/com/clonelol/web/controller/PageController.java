@@ -1,19 +1,18 @@
-//package com.clonelol.web.controller;
-//
-//import com.clonelol.champion.entity.Champion;
-//import com.clonelol.web.dto.RotationResDto;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.ui.Model;
-//import org.springframework.web.bind.annotation.GetMapping;
-//
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
+package com.clonelol.web.controller;
+
+import com.clonelol.champion.entity.Champion;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 //@RequiredArgsConstructor
-//@Controller
-//public class indexController {
-//
+@Controller
+public class PageController {
+
 //    @GetMapping({"/","/index"})
 //    public String getMain(Model model) {
 //
@@ -27,4 +26,13 @@
 //
 //        return "index";
 //    }
-//}
+
+    // 첫 페이지
+    @GetMapping("/")
+    public String getMain(){
+
+        return "index";
+    }
+
+
+}
