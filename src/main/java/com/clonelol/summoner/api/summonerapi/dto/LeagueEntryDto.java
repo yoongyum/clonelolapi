@@ -1,5 +1,7 @@
 package com.clonelol.summoner.api.summonerapi.dto;
 
+import com.clonelol.summoner.entity.Rank;
+import com.clonelol.summoner.entity.Tier;
 import lombok.*;
 
 @Getter
@@ -13,8 +15,8 @@ public class LeagueEntryDto {
     private String summonerId;
     private String summonerName;
     private String queueType;
-    private String tier;
-    private String rank;
+    private Tier tier;
+    private Rank rank;
     private int leaguePoints;
     private int wins;
     private int losses;
@@ -23,5 +25,7 @@ public class LeagueEntryDto {
     private boolean freshBlood;
     private boolean inactive;
 
-
+    public int getSum() {
+        return rank.getValue() + tier.getValue();
+    }
 }

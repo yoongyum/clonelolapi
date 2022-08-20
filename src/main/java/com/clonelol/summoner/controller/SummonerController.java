@@ -63,6 +63,9 @@ public class SummonerController {
             String puuid = summonerDto.getPuuid();                  // 소환사 puuid
             long summonerLevel = summonerDto.getSummonerLevel();    // 소환사 레벨
 
+            model.addAttribute("profileIconId",profileIconId);
+            model.addAttribute("summonerLevel",summonerLevel);
+            model.addAttribute("name",name);
 
             // 랭크정보 불러 오기
             urlstr = BASE_KOR_API + SUMMONER_DETAIL + id + "?api_key=" + DEV_KEY;
@@ -124,5 +127,4 @@ public class SummonerController {
         }
         return "searchMain";
     }
-
 }

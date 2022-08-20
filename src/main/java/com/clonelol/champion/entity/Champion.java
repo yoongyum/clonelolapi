@@ -38,7 +38,7 @@ public class Champion {
     @OneToMany(mappedBy = "champion", cascade = ALL)
     private final List<ChampionSkins> skins = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(cascade = ALL)
     @JoinColumn(name = "match_summary_id")
     private final List<MatchSummary> matchSummaries = new ArrayList<>();
 
@@ -70,5 +70,9 @@ public class Champion {
         dto.setName(this.nameKr);
         dto.setPortrait(this.portrait);
         return dto;
+    }
+
+    public void addMatchSummary(MatchSummary matchSummary) {
+        this.matchSummaries.add(matchSummary);
     }
 }
