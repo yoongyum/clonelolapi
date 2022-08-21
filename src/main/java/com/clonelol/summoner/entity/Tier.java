@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Tier {
+    CHALLENGER("CHALLENGER", 800),
+    GRANDMASTER("GRANDMASTER", 700),
     MASTER("MASTER",600),
     DIAMOND("DIAMOND",500),
     PLATINUM("PLATINUM",400),
