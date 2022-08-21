@@ -28,7 +28,6 @@ public class SummonerController {
     // 소환사 전적검색
     @PostMapping("/summoners")
     public String searchSummoner(@RequestParam String summonerName , Model model, HttpSession session){
-        VersionCheck.checkVersion();
         String result = "", line;
         BufferedReader br = null;
         // 소환사 정보
@@ -63,7 +62,8 @@ public class SummonerController {
             String puuid = summonerDto.getPuuid();                  // 소환사 puuid
             long summonerLevel = summonerDto.getSummonerLevel();    // 소환사 레벨
 
-            model.addAttribute("profileIconId",profileIconId);
+            String profileIcon = BASE_GAME_DATA + "/" + profileiconVersion + "/img/profileicon/" + profileIconId + ".png";
+            model.addAttribute("profileIcon",profileIcon);
             model.addAttribute("summonerLevel",summonerLevel);
             model.addAttribute("name",name);
 
@@ -89,38 +89,33 @@ public class SummonerController {
             List<LeagueEntryDto> leagueEntryDto = null;
             leagueEntryDto = gson.fromJson(result, new TypeToken<List<LeagueEntryDto>>(){}.getType());
 
-            String leagueId = leagueEntryDto.get(0).getLeagueId();         // 리그이름
-            String summonerId = leagueEntryDto.get(0).getSummonerId();     // 소환사 암호화 명
-            String tier = leagueEntryDto.get(0).getTier();                 // 티어(골드, 브론즈)
-            String rank = leagueEntryDto.get(0).getRank();                 // 랭크(1,2,3,4)
-            int leaguePoints = leagueEntryDto.get(0).getLeaguePoints();    // LP
-            int wins = leagueEntryDto.get(0).getWins();                    // 승
-            int losses = leagueEntryDto.get(0).getLosses();                // 패
+            if(leagueEntryDto.isEmpty()){
+                return "searchMain";
+            }
+            else{
+                String leagueId = leagueEntryDto.get(0).getLeagueId();         // 리그이름
+                String tier = leagueEntryDto.get(0).getTier().getKey();        // 티어(골드, 브론즈)
+                String rank = leagueEntryDto.get(0).getRank().getKey();        // 랭크(1,2,3,4)
+                int leaguePoints = leagueEntryDto.get(0).getLeaguePoints();    // LP
+                int wins = leagueEntryDto.get(0).getWins();                    // 승
+                int losses = leagueEntryDto.get(0).getLosses();                // 패
 
-            // 승률
-            int winningRate = (int)(((double)wins / (double)(wins + losses)) * 100);
+                // 승률
+                int winningRate = (int)(((double)wins / (double)(wins + losses)) * 100);
 
-            model.addAttribute("leagueId", leagueId);
-            model.addAttribute("summonerId", summonerId);
-            model.addAttribute("tier", tier);
-            model.addAttribute("rank", rank);
-            model.addAttribute("leaguePoints", leaguePoints);
-            model.addAttribute("wins", wins);
-            model.addAttribute("losses", losses);
-            model.addAttribute("winningRate", winningRate);
-
-            String profileIcon = BASE_GAME_DATA + "/" + profileiconVersion + "/img/profileicon/" + profileIconId + ".png";
-            model.addAttribute("profileIcon",profileIcon);
-            model.addAttribute("summonerLevel",summonerLevel);
-            model.addAttribute("name",name);
-
+                model.addAttribute("leagueId", leagueId);
+                model.addAttribute("tier", tier);
+                model.addAttribute("tierImage", "images/" + tier + ".png");
+                model.addAttribute("rank", rank);
+                model.addAttribute("leaguePoints", leaguePoints);
+                model.addAttribute("wins", wins);
+                model.addAttribute("losses", losses);
+                model.addAttribute("winningRate", winningRate);
+            }
         }
-//        catch (FileNotFoundException fe){
-//
-//        }
-//        catch (IndexOutOfBoundsException ie){
-//
-//        }
+        catch (FileNotFoundException fe){ // 검색결과가 없을시
+            return "searchEmpty";
+        }
         catch(Exception e){
             e.printStackTrace();
             return "index";
