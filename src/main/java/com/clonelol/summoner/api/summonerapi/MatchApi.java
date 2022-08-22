@@ -4,6 +4,9 @@ import com.clonelol.summoner.api.summonerapi.dto.LeagueEntryDto;
 import com.clonelol.summoner.api.summonerapi.dto.MatchSummaryDto;
 import com.clonelol.summoner.api.summonerapi.dto.SimpleMatchDto;
 import com.clonelol.summoner.api.summonerapi.dto.property.infoProperty.Participant;
+import com.clonelol.summoner.api.summonerapi.dto.property.infoProperty.Team;
+import com.clonelol.summoner.api.summonerapi.dto.property.infoProperty.teamProperty.BanDto;
+import com.clonelol.summoner.entity.Ban;
 import com.clonelol.summoner.service.MatchService;
 import com.clonelol.summoner.service.SummonerService;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +15,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.clonelol.config.ApiKeyConfiguration.*;
@@ -68,6 +68,13 @@ public class MatchApi {
 
         matchService.initializeAllForSummary(matchSummaryDtos);
 
+        Set<BanDto> banDtos = new HashSet<>();
+        matchDto.getInfo().getTeams()
+                .stream()
+                .map(Team::getBanDtos)
+                .forEach(banDtos::addAll);
+
+        matchService.temp(banDtos, avgOfTier);
     }
 
     private LeagueEntryDto getLeagueEntryDto(String id) {
