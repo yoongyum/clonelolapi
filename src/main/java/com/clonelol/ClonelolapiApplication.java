@@ -1,5 +1,6 @@
 package com.clonelol;
 
+import com.clonelol.config.VersionCheck;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 public class ClonelolapiApplication {
 
 	public static void main(String[] args) {
+		VersionCheck.checkVersion();
 		SpringApplication.run(ClonelolapiApplication.class, args);
 	}
 
